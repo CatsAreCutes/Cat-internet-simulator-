@@ -197,6 +197,15 @@
             margin: auto;
         }
 
+        .error-box {
+            border: 3px solid red;
+            background: #fff0f0;
+            padding: 15px;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            font-family: "Courier New", monospace;
+        }
+
     </style>
 
 </head>
@@ -345,11 +354,6 @@
    CAT INTERNET SIMULATOR
    ========================================================= */
 
-
-/* =========================================================
-   VARIABLES
-   ========================================================= */
-
 let suspicion = 0;
 
 let gameOver = false;
@@ -360,27 +364,16 @@ let gameOver = false;
    ========================================================= */
 
 const searchInput =
-    document.getElementById(
-        "searchInput"
-    );
-
+    document.getElementById("searchInput");
 
 const searchButton =
-    document.getElementById(
-        "searchButton"
-    );
-
+    document.getElementById("searchButton");
 
 const page =
-    document.getElementById(
-        "page"
-    );
-
+    document.getElementById("page");
 
 const status =
-    document.getElementById(
-        "status"
-    );
+    document.getElementById("status");
 
 
 /* =========================================================
@@ -390,9 +383,7 @@ const status =
 function escapeHTML(text) {
 
     const div =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     div.textContent =
         text;
@@ -409,32 +400,20 @@ function escapeHTML(text) {
 function getSuspicionLevel() {
 
     if (suspicion < 20) {
-
         return "LOW";
-
     }
-
 
     if (suspicion < 45) {
-
         return "A LITTLE SUSPICIOUS";
-
     }
-
 
     if (suspicion < 70) {
-
         return "SUSPICIOUS";
-
     }
-
 
     if (suspicion < 90) {
-
         return "VERY SUSPICIOUS";
-
     }
-
 
     return "THE CATS KNOW";
 
@@ -461,14 +440,10 @@ function updateStatus() {
 function addSuspicion(amount) {
 
     if (gameOver) {
-
         return;
-
     }
 
-
     suspicion += amount;
-
 
     if (suspicion >= 100) {
 
@@ -479,9 +454,7 @@ function addSuspicion(amount) {
         catGameOver();
 
         return;
-
     }
-
 
     updateStatus();
 
@@ -495,21 +468,14 @@ function addSuspicion(amount) {
 function removeSuspicion(amount) {
 
     if (gameOver) {
-
         return;
-
     }
-
 
     suspicion -= amount;
 
-
     if (suspicion < 0) {
-
         suspicion = 0;
-
     }
-
 
     updateStatus();
 
@@ -526,10 +492,6 @@ function checkSearch(query) {
         query.toLowerCase();
 
 
-    /* -----------------------------------------
-       SHOES
-    ----------------------------------------- */
-
     if (
         lower.includes("shoe") ||
         lower.includes("shoes")
@@ -541,10 +503,6 @@ function checkSearch(query) {
 
     }
 
-
-    /* -----------------------------------------
-       HUMANS
-    ----------------------------------------- */
 
     if (
         lower.includes("human") ||
@@ -558,10 +516,6 @@ function checkSearch(query) {
     }
 
 
-    /* -----------------------------------------
-       HANDS
-    ----------------------------------------- */
-
     if (
         lower.includes("hand") ||
         lower.includes("hands")
@@ -573,10 +527,6 @@ function checkSearch(query) {
 
     }
 
-
-    /* -----------------------------------------
-       BECOMING HUMAN
-    ----------------------------------------- */
 
     if (
         lower.includes("become human") ||
@@ -591,10 +541,6 @@ function checkSearch(query) {
     }
 
 
-    /* -----------------------------------------
-       CATS
-    ----------------------------------------- */
-
     if (
         lower.includes("cat") ||
         lower.includes("cats")
@@ -606,10 +552,6 @@ function checkSearch(query) {
 
     }
 
-
-    /* -----------------------------------------
-       BOXES
-    ----------------------------------------- */
 
     if (
         lower.includes("box") ||
@@ -623,10 +565,6 @@ function checkSearch(query) {
     }
 
 
-    /* -----------------------------------------
-       FISH
-    ----------------------------------------- */
-
     if (
         lower.includes("fish")
     ) {
@@ -637,10 +575,6 @@ function checkSearch(query) {
 
     }
 
-
-    /* -----------------------------------------
-       MOUSE
-    ----------------------------------------- */
 
     if (
         lower.includes("mouse")
@@ -653,23 +587,18 @@ function checkSearch(query) {
     }
 
 
-    /* -----------------------------------------
-       NORMAL SEARCH
-    ----------------------------------------- */
-
     return "🐈 The cats are investigating your search.";
 
 }
 
 
 /* =========================================================
-   CAT GAME OVER
+   GAME OVER
    ========================================================= */
 
 function catGameOver() {
 
     gameOver = true;
-
 
     page.innerHTML = `
 
@@ -712,9 +641,7 @@ function catGameOver() {
 
                 <br>
 
-                <button
-                    onclick="location.reload()"
-                >
+                <button onclick="location.reload()">
                     🔄 TRY AGAIN
                 </button>
 
@@ -723,7 +650,6 @@ function catGameOver() {
         </div>
 
     `;
-
 
     status.textContent =
         "🚨 GAME OVER | 😾 THE CATS KNOW";
@@ -738,9 +664,7 @@ function catGameOver() {
 async function searchCatAI() {
 
     if (gameOver) {
-
         return;
-
     }
 
 
@@ -749,9 +673,7 @@ async function searchCatAI() {
 
 
     if (!query) {
-
         return;
-
     }
 
 
@@ -760,9 +682,7 @@ async function searchCatAI() {
 
 
     if (gameOver) {
-
         return;
-
     }
 
 
@@ -799,11 +719,13 @@ async function searchCatAI() {
             await fetch(
                 "/api/chat",
                 {
-
                     method: "POST",
 
                     headers: {
                         "Content-Type":
+                            "application/json",
+
+                        "Accept":
                             "application/json"
                     },
 
@@ -811,13 +733,51 @@ async function searchCatAI() {
                         JSON.stringify({
                             message: query
                         })
-
                 }
             );
 
 
-        const data =
-            await response.json();
+        /*
+         * IMPORTANT:
+         * Read the response as TEXT first.
+         *
+         * This prevents JSON.parse from hiding
+         * the actual response from the server.
+         */
+
+        const rawText =
+            await response.text();
+
+
+        console.log(
+            "Cat.AI server response:",
+            rawText
+        );
+
+
+        let data;
+
+
+        try {
+
+            data =
+                JSON.parse(rawText);
+
+        } catch (jsonError) {
+
+            throw new Error(
+                "The server did not return valid JSON.\n\n"
+                +
+                "HTTP status: "
+                +
+                response.status
+                +
+                "\n\nServer response:\n"
+                +
+                rawText
+            );
+
+        }
 
 
         if (!response.ok) {
@@ -825,6 +785,17 @@ async function searchCatAI() {
             throw new Error(
                 data.error ||
                 "Cat.AI request failed."
+            );
+
+        }
+
+
+        if (
+            !data.reply
+        ) {
+
+            throw new Error(
+                "The server returned JSON, but there was no 'reply' field."
             );
 
         }
@@ -840,6 +811,7 @@ async function searchCatAI() {
     } catch (error) {
 
         console.error(
+            "CAT.AI ERROR:",
             error
         );
 
@@ -847,23 +819,27 @@ async function searchCatAI() {
         page.innerHTML = `
 
             <div class="cat-banner">
-                🐈 CAT.AI ERROR
+                🐈 MEOW?!
             </div>
+
 
             <div class="result-box">
 
                 <h2>
-                    MEOW?!
+                    Cat.AI couldn't connect to its brain.
                 </h2>
 
-                <p>
-                    Cat.AI couldn't connect to its brain.
-                </p>
 
-                <p>
+                <div class="error-box">
                     ${escapeHTML(
                         error.message
                     )}
+                </div>
+
+
+                <p>
+                    Check the Render logs to see what
+                    the Cat.AI server is doing.
                 </p>
 
             </div>
@@ -943,6 +919,7 @@ function showResults(
 
             <p>
                 😼 Current suspicion:
+
                 <b>
                     ${getSuspicionLevel()}
                 </b>
@@ -959,15 +936,13 @@ function showResults(
 
 
 /* =========================================================
-   FORMAT AI RESPONSE
+   FORMAT CAT.AI RESPONSE
    ========================================================= */
 
 function formatReply(text) {
 
     let safe =
-        escapeHTML(
-            text
-        );
+        escapeHTML(text);
 
 
     safe =
@@ -1026,9 +1001,7 @@ searchInput.addEventListener(
    ========================================================= */
 
 document
-    .getElementById(
-        "homeButton"
-    )
+    .getElementById("homeButton")
     .addEventListener(
         "click",
         function() {
@@ -1044,9 +1017,7 @@ document
    ========================================================= */
 
 document
-    .getElementById(
-        "refreshButton"
-    )
+    .getElementById("refreshButton")
     .addEventListener(
         "click",
         function() {
@@ -1062,9 +1033,7 @@ document
    ========================================================= */
 
 document
-    .getElementById(
-        "backButton"
-    )
+    .getElementById("backButton")
     .addEventListener(
         "click",
         function() {
@@ -1080,9 +1049,7 @@ document
    ========================================================= */
 
 document
-    .getElementById(
-        "forwardButton"
-    )
+    .getElementById("forwardButton")
     .addEventListener(
         "click",
         function() {
@@ -1094,13 +1061,11 @@ document
 
 
 /* =========================================================
-   CAT WEBSITES
+   FAKE CAT WEBSITES
    ========================================================= */
 
 document
-    .querySelectorAll(
-        ".links a"
-    )
+    .querySelectorAll(".links a")
     .forEach(
         function(link) {
 
@@ -1154,18 +1119,14 @@ document
 
 
 /* =========================================================
-   RANDOM CAT KEYBOARD EVENT
+   RANDOM CAT
    ========================================================= */
 
 setInterval(
     function() {
 
-        if (
-            gameOver
-        ) {
-
+        if (gameOver) {
             return;
-
         }
 
 
@@ -1190,12 +1151,17 @@ setInterval(
 
 updateStatus();
 
+
 console.log(
     "🐈 CAT INTERNET SIMULATOR ONLINE"
 );
 
 console.log(
     "😼 Suspicion system online"
+);
+
+console.log(
+    "🧠 Cat.AI search system online"
 );
 
 </script>

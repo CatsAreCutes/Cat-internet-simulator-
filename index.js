@@ -47,7 +47,7 @@ explain this clearly.
 
 You can joke about your history.
 
-For example:
+For example, you might say:
 
 "I remember the original Cat.AI website. I was there.
 Then someone built an entire internet around me."
@@ -109,22 +109,11 @@ Keep responses reasonably concise.
    ========================================================= */
 
 const MIME_TYPES = {
-
-    ".html":
-        "text/html; charset=utf-8",
-
-    ".js":
-        "application/javascript; charset=utf-8",
-
-    ".css":
-        "text/css; charset=utf-8",
-
-    ".json":
-        "application/json; charset=utf-8",
-
-    ".txt":
-        "text/plain; charset=utf-8"
-
+    ".html": "text/html; charset=utf-8",
+    ".js": "application/javascript; charset=utf-8",
+    ".css": "text/css; charset=utf-8",
+    ".json": "application/json; charset=utf-8",
+    ".txt": "text/plain; charset=utf-8"
 };
 
 
@@ -132,30 +121,16 @@ const MIME_TYPES = {
    SEND JSON
    ========================================================= */
 
-function sendJSON(
-    response,
-    statusCode,
-    data
-) {
+function sendJSON(response, statusCode, data) {
 
-    const body =
-        JSON.stringify(data);
+    const body = JSON.stringify(data);
 
-
-    response.writeHead(
-        statusCode,
-        {
-            "Content-Type":
-                "application/json; charset=utf-8",
-
-            "Content-Length":
-                Buffer.byteLength(body)
-        }
-    );
-
+    response.writeHead(statusCode, {
+        "Content-Type": "application/json; charset=utf-8",
+        "Content-Length": Buffer.byteLength(body)
+    });
 
     response.end(body);
-
 }
 
 
@@ -165,54 +140,32 @@ function sendJSON(
 
 function readBody(request) {
 
-    return new Promise(
-        (resolve, reject) => {
+    return new Promise((resolve, reject) => {
 
-            let body = "";
+        let body = "";
 
+        request.on("data", chunk => {
 
-            request.on(
-                "data",
-                chunk => {
+            body += chunk.toString();
 
-                    body += chunk.toString();
+            if (body.length > 1000000) {
 
+                reject(
+                    new Error("Request body is too large.")
+                );
 
-                    if (
-                        body.length > 1000000
-                    ) {
+                request.destroy();
+            }
 
-                        reject(
-                            new Error(
-                                "Request body is too large."
-                            )
-                        );
+        });
 
-                        request.destroy();
+        request.on("end", () => {
+            resolve(body);
+        });
 
-                    }
+        request.on("error", reject);
 
-                }
-            );
-
-
-            request.on(
-                "end",
-                () => {
-
-                    resolve(body);
-
-                }
-            );
-
-
-            request.on(
-                "error",
-                reject
-            );
-
-        }
-    );
+    });
 
 }
 
@@ -232,67 +185,56 @@ async function askCatAI(message) {
     }
 
 
-    const groqResponse =
-        await fetch(
-            "https://api.groq.com/openai/v1/chat/completions",
-            {
+    const groqResponse = await fetch(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {
 
-                method: "POST",
+            method: "POST",
 
-                headers: {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + GROQ_API_KEY
+            },
 
-                    "Content-Type":
-                        "application/json",
+            body: JSON.stringify({
 
-                    "Authorization":
-                        "Bearer " +
-                        GROQ_API_KEY
+                model: "llama-3.3-70b-versatile",
 
-                },
+                messages: [
 
-                body:
-                    JSON.stringify({
+                    {
+                        role: "system",
+                        content: CAT_SYSTEM_PROMPT
+                    },
 
-                        model:
-                            "llama-3.3-70b-versatile",
+                    {
+                        role: "user",
+                        content: message
+                    }
 
-                        messages: [
+                ]
 
-                            {
-                                role: "system",
+            })
 
-                                content:
-                                    CAT_SYSTEM_PROMPT
-                            },
-
-                            {
-                                role: "user",
-
-                                content:
-                                    message
-                            }
-
-                        ]
-
-                    })
-
-            }
-        );
+        }
+    );
 
 
-    const rawText =
-        await groqResponse.text();
-
+    const rawText = await groqResponse.text();
 
     let data;
 
 
     try {
 
-        data =
-            JSON.parse(rawText);
+        data = JSON.parse(rawText);
 
     } catch (error) {
+
+        console.error(
+            "Groq returned invalid JSON:",
+            rawText
+        );
 
         throw new Error(
             "Groq returned an invalid response."
@@ -308,7 +250,6 @@ async function askCatAI(message) {
             data
         );
 
-
         throw new Error(
             data.error?.message ||
             "Groq API request failed."
@@ -318,10 +259,7 @@ async function askCatAI(message) {
 
 
     const reply =
-        data
-            ?.choices?.[0]
-            ?.message
-            ?.content;
+        data?.choices?.[0]?.message?.content;
 
 
     if (!reply) {
@@ -369,14 +307,11 @@ function serveFile(
 
 
             const extension =
-                path.extname(
-                    filePath
-                );
+                path.extname(filePath);
 
 
             const contentType =
-                MIME_TYPES[extension]
-                ||
+                MIME_TYPES[extension] ||
                 "application/octet-stream";
 
 
@@ -401,261 +336,232 @@ function serveFile(
    SERVER
    ========================================================= */
 
-const server =
-    http.createServer(
-        async (
-            request,
-            response
-        ) => {
+const server = http.createServer(
+    async (request, response) => {
 
-            const url =
-                new URL(
-                    request.url,
-                    "http://localhost"
-                );
+        const url = new URL(
+            request.url,
+            "http://localhost"
+        );
 
 
-            console.log(
-                request.method,
-                url.pathname
+        console.log(
+            request.method,
+            url.pathname
+        );
+
+
+        /* =================================================
+           HOME PAGE
+           ================================================= */
+
+        if (
+            request.method === "GET" &&
+            url.pathname === "/"
+        ) {
+
+            serveFile(
+                request,
+                response,
+                path.join(
+                    __dirname,
+                    "index.html"
+                )
             );
 
+            return;
 
-            /* =================================================
-               HOME PAGE
-               ================================================= */
+        }
 
-            if (
-                request.method === "GET"
-                &&
-                url.pathname === "/"
-            ) {
 
-                serveFile(
-                    request,
-                    response,
-                    path.join(
-                        __dirname,
-                        "index.html"
-                    )
+        /* =================================================
+           CAT API
+           ================================================= */
+
+        if (
+            request.method === "GET" &&
+            url.pathname === "/api/cat"
+        ) {
+
+            sendJSON(
+                response,
+                200,
+                {
+                    cat: "🐈 MEOW!",
+                    catsOnline: 47,
+                    suspicion: "THE CATS KNOW",
+                    website: "Cat Internet Simulator",
+                    basedOn: "Cat.AI"
+                }
+            );
+
+            return;
+
+        }
+
+
+        /* =================================================
+           CAT.AI CHAT API
+           ================================================= */
+
+        if (
+            request.method === "POST" &&
+            url.pathname === "/api/chat"
+        ) {
+
+            try {
+
+                const body =
+                    await readBody(request);
+
+
+                let input;
+
+
+                try {
+
+                    input =
+                        JSON.parse(body);
+
+                } catch (error) {
+
+                    sendJSON(
+                        response,
+                        400,
+                        {
+                            error:
+                                "Invalid JSON request."
+                        }
+                    );
+
+                    return;
+
+                }
+
+
+                const message =
+                    input?.message;
+
+
+                if (
+                    typeof message !== "string" ||
+                    message.trim() === ""
+                ) {
+
+                    sendJSON(
+                        response,
+                        400,
+                        {
+                            error:
+                                "Please provide a message."
+                        }
+                    );
+
+                    return;
+
+                }
+
+
+                console.log(
+                    "🐾 Cat.AI received:",
+                    message
                 );
 
-                return;
 
-            }
+                const reply =
+                    await askCatAI(message);
 
 
-            /* =================================================
-               CAT API
-               ================================================= */
+                console.log(
+                    "🐈 Cat.AI replied:",
+                    reply
+                );
 
-            if (
-                request.method === "GET"
-                &&
-                url.pathname === "/api/cat"
-            ) {
 
                 sendJSON(
                     response,
                     200,
                     {
-
-                        cat:
-                            "🐈 MEOW!",
-
-                        catsOnline:
-                            47,
-
-                        suspicion:
-                            "THE CATS KNOW",
-
-                        website:
-                            "Cat Internet Simulator",
-
-                        basedOn:
-                            "Cat.AI"
-
+                        reply: reply
                     }
                 );
 
-                return;
+
+            } catch (error) {
+
+                console.error(
+                    "🐈 Cat.AI error:",
+                    error
+                );
+
+
+                sendJSON(
+                    response,
+                    500,
+                    {
+                        error:
+                            error.message ||
+                            "Cat.AI encountered an error."
+                    }
+                );
 
             }
 
 
-            /* =================================================
-               CAT.AI CHAT API
-               ================================================= */
-
-            if (
-                request.method === "POST"
-                &&
-                url.pathname === "/api/chat"
-            ) {
-
-                try {
-
-                    const body =
-                        await readBody(
-                            request
-                        );
-
-
-                    let input;
-
-
-                    try {
-
-                        input =
-                            JSON.parse(
-                                body
-                            );
-
-                    } catch (error) {
-
-                        sendJSON(
-                            response,
-                            400,
-                            {
-                                error:
-                                    "Invalid JSON request."
-                            }
-                        );
-
-                        return;
-
-                    }
-
-
-                    const message =
-                        input?.message;
-
-
-                    if (
-                        typeof message !==
-                        "string"
-                        ||
-                        message.trim() === ""
-                    ) {
-
-                        sendJSON(
-                            response,
-                            400,
-                            {
-                                error:
-                                    "Please provide a message."
-                            }
-                        );
-
-                        return;
-
-                    }
-
-
-                    console.log(
-                        "🐾 Cat.AI received:",
-                        message
-                    );
-
-
-                    const reply =
-                        await askCatAI(
-                            message
-                        );
-
-
-                    console.log(
-                        "🐈 Cat.AI replied:",
-                        reply
-                    );
-
-
-                    sendJSON(
-                        response,
-                        200,
-                        {
-                            reply:
-                                reply
-                        }
-                    );
-
-
-                } catch (error) {
-
-                    console.error(
-                        "🐈 Cat.AI error:",
-                        error
-                    );
-
-
-                    sendJSON(
-                        response,
-                        500,
-                        {
-                            error:
-                                error.message
-                                ||
-                                "Cat.AI encountered an error."
-                        }
-                    );
-
-                }
-
-
-                return;
-
-            }
-
-
-            /* =================================================
-               404
-               ================================================= */
-
-            response.writeHead(
-                404,
-                {
-                    "Content-Type":
-                        "text/html; charset=utf-8"
-                }
-            );
-
-
-            response.end(`
-
-                <!DOCTYPE html>
-
-                <html>
-
-                <head>
-
-                    <title>
-                        404 - Cat Not Found
-                    </title>
-
-                </head>
-
-                <body>
-
-                    <h1>
-                        🐈 404 - Cat Not Found
-                    </h1>
-
-                    <p>
-                        The cat couldn't find that page.
-                    </p>
-
-                    <a href="/">
-                        Go back home
-                    </a>
-
-                </body>
-
-                </html>
-
-            `);
+            return;
 
         }
-    );
+
+
+        /* =================================================
+           404
+           ================================================= */
+
+        response.writeHead(
+            404,
+            {
+                "Content-Type":
+                    "text/html; charset=utf-8"
+            }
+        );
+
+
+        response.end(`
+
+            <!DOCTYPE html>
+
+            <html>
+
+            <head>
+
+                <title>
+                    404 - Cat Not Found
+                </title>
+
+            </head>
+
+            <body>
+
+                <h1>
+                    🐈 404 - Cat Not Found
+                </h1>
+
+                <p>
+                    The cat couldn't find that page.
+                </p>
+
+                <a href="/">
+                    Go back home
+                </a>
+
+            </body>
+
+            </html>
+
+        `);
+
+    }
+);
 
 
 /* =========================================================
@@ -680,8 +586,7 @@ server.listen(
         );
 
         console.log(
-            "🌐 Server listening on port "
-            + PORT
+            "🌐 Server listening on port " + PORT
         );
 
         console.log(
@@ -693,9 +598,7 @@ server.listen(
         );
 
 
-        if (
-            !GROQ_API_KEY
-        ) {
+        if (!GROQ_API_KEY) {
 
             console.log(
                 "⚠️ WARNING: GROQ_API_KEY is missing!"

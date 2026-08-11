@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cat Internet Simulator</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        body {
+            background: #008080;
+            font-family: "MS Sans Serif", Arial, sans-serif;
+            color: black;
+        }
+
+        .browser {
+            width: 100%;
+            height: 100vh;
+            background: #c0c0c0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .titlebar {
+            height: 30px;
+            flex-shrink: 0;
+            background: #000080;
+            color: white;
+            padding: 5px 8px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .menu {
+            height: 30px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 22px;
+            padding: 4px 8px;
+            border-bottom: 2px solid #808080;
+        }
+
+        .toolbar {
+            height: 40px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px;
+            border-bottom: 2px solid #808080;
+        }
+
+        button {
+            background: #c0c0c0;
+            border: 2px solid white;
+            border-right-color: #404040;
+            border-bottom-color: #404040;
+            padding: 4px 10px;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        button:active {
+            border: 2px solid #404040;
+            border-right-color: white;
+            border-bottom-color: white;
+        }
+
+        .address {
+            height: 38px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px;
+        }
+
+        .address input {
+            flex: 1;
+            height: 25px;
+            border: 2px inset white;
+            background: white;
+            padding: 3px 5px;
+            font-family: "Courier New", monospace;
+        }
+
+        .page {
+            flex: 1;
+            min-height: 0;
+            margin: 5px;
+            padding: 20px;
+            background: white;
+            border: 2px inset white;
+            overflow: auto;
+        }
+
+        .cat-banner {
+            background: yellow;
+            border: 2px solid black;
+            padding: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: Georgia, serif;
+            color: #000080;
+        }
+
+        h2 {
+            color: #000080;
+        }
+
+        .links a {
+            display: block;
+            color: #0000ee;
+            text-decoration: underline;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        .links a:hover {
+            color: red;
+        }
+
+        .status {
+            height: 25px;
+            flex-shrink: 0;
+            padding: 4px 6px;
+            border-top: 2px solid #808080;
+            background: #c0c0c0;
+            font-family: "Courier New", monospace;
+            font-size: 12px;
+        }
+
+        .cat-info {
+            float: right;
+            width: 250px;
+            margin-left: 20px;
+            padding: 12px;
+            border: 2px solid black;
+            background: #ffffcc;
+        }
+
+        .cat-reaction {
+            padding: 12px;
+            border: 2px solid #808080;
+            background: #eeeeee;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="browser">
+
+    <div class="titlebar">
+        🐈 Cat Internet Simulator - Internet Explorer
+    </div>
+
+    <div class="menu">
+        <span>File</span>
+        <span>Edit</span>
+        <span>View</span>
+        <span>Favorites</span>
+        <span>Tools</span>
+        <span>Help</span>
+    </div>
+
+    <div class="toolbar">
+
+        <button id="backButton">
+            ◀ Back
+        </button>
+
+        <button id="forwardButton">
+            ▶ Forward
+        </button>
+
+        <button id="refreshButton">
+            ⟳ Refresh
+        </button>
+
+        <button id="homeButton">
+            🏠 Home
+        </button>
+
+    </div>
+
+    <div class="address">
+
+        <b>Address:</b>
+
+        <input
+            id="addressInput"
+            type="text"
+            value="catinternet.local"
+            autocomplete="off"
+        >
+
+        <button id="goButton">
+            Go
+        </button>
+
+    </div>
+
+    <main
+        class="page"
+        id="page"
+    >
+
+        <div class="cat-banner">
+            🐈 WELCOME TO THE CAT INTERNET 🐈
+        </div>
+
+        <h1>
+            Cat Internet Simulator
+        </h1>
+
+        <p>
+            Welcome, fellow cat.
+        </p>
+
+        <p>
+            This website is powered by approximately
+            <b>3.7 cats</b> and one suspicious computer.
+        </p>
+
+        <hr>
+
+        <h2>
+            🐾 Cat Websites
+        </h2>
+
+        <div class="links">
+
+            <a href="#" data-site="MeowTube">
+                📺 MeowTube
+            </a>
+
+            <a href="#" data-site="Purrter">
+                💬 Purrter
+            </a>
+
+            <a href="#" data-site="MeowMail">
+                📧 MeowMail
+            </a>
+
+            <a href="#" data-site="PawMart">
+                🛒 PawMart
+            </a>
+
+            <a href="#" data-site="CatNews">
+                📰 CatNews
+            </a>
+
+            <a href="#" data-site="WhiskerWiki">
+                📚 WhiskerWiki
+            </a>
+
+        </div>
+
+    </main>
+
+    <div
+        class="status"
+        id="status"
+    >
+        Done. | 🐈 Cats online: 47 | 😼 Suspicion level: LOW
+    </div>
+
+</div>
+
+<script>
+
+/* ============================================================
+   🐈 CAT INTERNET SIMULATOR
+   Browser JavaScript
+   ============================================================ */
+
+const catFacts = [
+
+    "Cats can sleep for many hours a day.",
+
+    "Cats use their whiskers to sense their surroundings.",
+
+    "A group of cats can be called a clowder.",
+
+    "Cats spend a lot of time grooming themselves.",
+
+    "Many cats really like boxes.",
+
+    "Cats have excellent hearing.",
+
+    "Cats can rotate their ears to locate sounds.",
+
+    "Cats can jump surprisingly high."
+
+];
+
+const catNames = [
+
+    "Mittens",
+    "Whiskers",
+    "Momo",
+    "Bugzi",
+    "Cocoachip",
+    "Noodle",
+    "Pixel",
+    "Toebeans"
+
+];
+
+
+/* ============================================================
+   GAME STATE
+   ============================================================ */
+
+let suspicion = 0;
+
+const MAX_SUSPICION = 100;
+
+
+/* ============================================================
+   ELEMENTS
+   ============================================================ */
+
+const addressInput =
+    document.getElementById("addressInput");
+
+const goButton =
+    document.getElementById("goButton");
+
+const page =
+    document.getElementById("page");
+
+const status =
+    document.getElementById("status");
+
+
+/* ============================================================
+   RANDOM CAT FACT
+   ============================================================ */
+
+function getRandomCatFact() {
+
+    return catFacts[
+        Math.floor(
+            Math.random() *
+            catFacts.length
+        )
+    ];
+
+}
+
+
+/* ============================================================
+   RANDOM CAT NAME
+   ============================================================ */
+
+function getRandomCatName() {
+
+    return catNames[
+        Math.floor(
+            Math.random() *
+            catNames.length
+        )
+    ];
+
+}
+
+
+/* ============================================================
+   ESCAPE HTML
+   ============================================================ */
+
+function escapeHTML(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent = text;
+
+    return div.innerHTML;
+
+}
+
+
+/* ============================================================
+   SUSPICION
+   ============================================================ */
+
+function increaseSuspicion(amount) {
+
+    suspicion += amount;
+
+    if (suspicion > MAX_SUSPICION) {
+
+        suspicion =
+            MAX_SUSPICION;
+
+    }
+
+    updateSuspicion();
+
+}
+
+
+function decreaseSuspicion(amount) {
+
+    suspicion -= amount;
+
+    if (suspicion < 0) {
+
+        suspicion = 0;
+
+    }
+
+    updateSuspicion();
+
+}
+
+
+/* ============================================================
+   SUSPICION TEXT
+   ============================================================ */
+
+function getSuspicionText() {
+
+    if (suspicion < 20) {
+
+        return "LOW";
+
+    }
+
+    if (suspicion < 45) {
+
+        return "A LITTLE SUSPICIOUS";
+
+    }
+
+    if (suspicion < 70) {
+
+        return "SUSPICIOUS";
+
+    }
+
+    if (suspicion < 90) {
+
+        return "VERY SUSPICIOUS";
+
+    }
+
+    return "THE CATS KNOW";
+
+}
+
+
+/* ============================================================
+   UPDATE STATUS
+   ============================================================ */
+
+function updateSuspicion() {
+
+    status.textContent =
+        "Done. | 🐈 Cats online: 47 | 😼 Suspicion level: "
+        + getSuspicionText();
+
+}
+
+
+/* ============================================================
+   SEARCH CHECK
+   ============================================================ */
+
+function checkSearch(query) {
+
+    const lower =
+        query.toLowerCase();
+
+
+    /* SHOES */
+
+    if (
+        lower.includes("shoe") ||
+        lower.includes("shoes")
+    ) {
+
+        increaseSuspicion(20);
+
+        return {
+
+            message:
+                "👁️ The cats noticed your search. " +
+                "Why do you know about SHOES?"
+
+        };
+
+    }
+
+
+    /* HUMAN */
+
+    if (
+        lower.includes("human") ||
+        lower.includes("humans")
+    ) {
+
+        increaseSuspicion(35);
+
+        return {
+
+            message:
+                "👁️ The cats are staring at you. " +
+                "That was suspicious."
+
+        };
+
+    }
+
+
+    /* HANDS */
+
+    if (
+        lower.includes("hand") ||
+        lower.includes("hands")
+    ) {
+
+        increaseSuspicion(25);
+
+        return {
+
+            message:
+                "🐈 One cat looks at your paws. " +
+                "\"Those aren't paws...\""
+
+        };
+
+    }
+
+
+    /* CATS */
+
+    if (
+        lower.includes("cat") ||
+        lower.includes("cats")
+    ) {
+
+        decreaseSuspicion(5);
+
+        return {
+
+            message:
+                "🐈 Excellent search. Very cat-like."
+
+        };
+
+    }
+
+
+    /* BOX */
+
+    if (
+        lower.includes("box") ||
+        lower.includes("boxes")
+    ) {
+
+        decreaseSuspicion(3);
+
+        return {
+
+            message:
+                "📦 The cats approve of your research."
+
+        };
+
+    }
+
+
+    /* MOUSE */
+
+    if (
+        lower.includes("mouse")
+    ) {
+
+        decreaseSuspicion(2);
+
+        return {
+
+            message:
+                "🐭 Very important cat research."
+
+        };
+
+    }
+
+
+    return {
+
+        message:
+            "🐈 The cats don't seem to care."
+
+    };
+
+}
+
+
+/* ============================================================
+   FAKE SEARCH
+   ============================================================ */
+
+function searchInternet() {
+
+    const query =
+        addressInput.value.trim();
+
+
+    if (!query) {
+
+        alert(
+            "MEOW? You didn't search for anything!"
+        );
+
+        return;
+
+    }
+
+
+    const result =
+        checkSearch(query);
+
+
+    /*
+       IMPORTANT:
+
+       We do NOT use window.open().
+       We do NOT send the search to Google.
+       We do NOT let Firefox search it.
+
+       This search stays inside Cat Internet Simulator.
+    */
+
+
+    showSearchPage(
+        query,
+        result
+    );
+
+}
+
+
+/* ============================================================
+   SEARCH PAGE
+   ============================================================ */
+
+function showSearchPage(
+    query,
+    searchResult
+) {
+
+    const fact =
+        getRandomCatFact();
+
+    const catName =
+        getRandomCatName();
+
+
+    page.innerHTML = `
+
+        <div class="cat-banner">
+            🐈 CAT INTERNET SEARCH
+        </div>
+
+        <h1>
+            Search Results
+        </h1>
+
+        <p>
+            You searched for:
+            <b>
+                ${escapeHTML(query)}
+            </b>
+        </p>
+
+        <div class="cat-info">
+
+            <h2>
+                🐾 Cat Info
+            </h2>
+
+            <p>
+                <b>Random cat:</b><br>
+                ${escapeHTML(catName)}
+            </p>
+
+            <p>
+                <b>Cat fact:</b><br>
+                ${escapeHTML(fact)}
+            </p>
+
+            <p>
+                😸 Cat approval:
+                <b>
+                    ${Math.floor(
+                        Math.random() * 101
+                    )}%
+                </b>
+            </p>
+
+        </div>
+
+        <h2>
+            🌐 Cat Internet Results
+        </h2>
+
+        <p>
+            Results for:
+            <b>
+                ${escapeHTML(query)}
+            </b>
+        </p>
+
+        <hr>
+
+        <div class="cat-reaction">
+
+            <h2>
+                🐈 Cat Reaction
+            </h2>
+
+            <p>
+                ${escapeHTML(
+                    searchResult.message
+                )}
+            </p>
+
+        </div>
+
+        <hr>
+
+        <p>
+            🐈 ${escapeHTML(catName)} says:
+        </p>
+
+        <p>
+            "MEOW."
+        </p>
+
+    `;
+
+    updateSuspicion();
+
+}
+
+
+/* ============================================================
+   HOME
+   ============================================================ */
+
+document
+    .getElementById("homeButton")
+    .addEventListener(
+        "click",
+        function() {
+
+            location.reload();
+
+        }
+    );
+
+
+/* ============================================================
+   BACK
+   ============================================================ */
+
+document
+    .getElementById("backButton")
+    .addEventListener(
+        "click",
+        function() {
+
+            history.back();
+
+        }
+    );
+
+
+/* ============================================================
+   FORWARD
+   ============================================================ */
+
+document
+    .getElementById("forwardButton")
+    .addEventListener(
+        "click",
+        function() {
+
+            history.forward();
+
+        }
+    );
+
+
+/* ============================================================
+   REFRESH
+   ============================================================ */
+
+document
+    .getElementById("refreshButton")
+    .addEventListener(
+        "click",
+        function() {
+
+            location.reload();
+
+        }
+    );
+
+
+/* ============================================================
+   GO BUTTON
+   ============================================================ */
+
+goButton.addEventListener(
+    "click",
+    searchInternet
+);
+
+
+/* ============================================================
+   ENTER KEY
+   ============================================================ */
+
+addressInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            event.preventDefault();
+
+            searchInternet();
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   CAT WEBSITE LINKS
+   ============================================================ */
+
+document
+    .querySelectorAll(".links a")
+    .forEach(
+        function(link) {
+
+            link.addEventListener(
+                "click",
+                function(event) {
+
+                    event.preventDefault();
+
+                    const site =
+                        link.dataset.site;
+
+                    openCatWebsite(site);
+
+                }
+            );
+
+        }
+    );
+
+
+/* ============================================================
+   FAKE CAT WEBSITE
+   ============================================================ */
+
+function openCatWebsite(site) {
+
+    const catName =
+        getRandomCatName();
+
+    const fact =
+        getRandomCatFact();
+
+
+    page.innerHTML = `
+
+        <div class="cat-banner">
+            🐈 ${escapeHTML(site)}
+        </div>
+
+        <h1>
+            ${escapeHTML(site)}
+        </h1>
+
+        <p>
+            Welcome to
+            ${escapeHTML(site)}!
+        </p>
+
+        <hr>
+
+        <h2>
+            🐾 Today's Cat
+        </h2>
+
+        <p>
+            ${escapeHTML(catName)}
+        </p>
+
+        <p>
+            ${escapeHTML(fact)}
+        </p>
+
+        <hr>
+
+        <p>
+            🐈 MEOW.
+        </p>
+
+    `;
+
+}
+
+
+/* ============================================================
+   RANDOM CAT KEYBOARD EVENT
+   ============================================================ */
+
+function catKeyboardEvent() {
+
+    const cat =
+        getRandomCatName();
+
+    console.log(
+        "🐈 " +
+        cat +
+        " walked across the keyboard."
+    );
+
+    console.log(
+        "jjjjjjjjjjjjjjjjjjjjjj"
+    );
+
+    decreaseSuspicion(3);
+
+}
+
+
+/* ============================================================
+   RANDOM CAT EVENT
+   ============================================================ */
+
+function randomCatEvent() {
+
+    if (
+        Math.random() < 0.08
+    ) {
+
+        catKeyboardEvent();
+
+    }
+
+}
+
+
+setInterval(
+    randomCatEvent,
+    30000
+);
+
+
+/* ============================================================
+   STARTUP
+   ============================================================ */
+
+console.log(
+    "🐈 CAT INTERNET SIMULATOR ONLINE"
+);
+
+console.log(
+    "🐾 Today's cat:",
+    getRandomCatName()
+);
+
+console.log(
+    "📚 Cat fact:",
+    getRandomCatFact()
+);
+
+updateSuspicion();
+
+</script>
+
+</body>
+</html>

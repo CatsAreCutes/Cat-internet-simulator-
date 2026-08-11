@@ -1,4 +1,4 @@
-```js
+
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
@@ -13,95 +13,71 @@ const GROQ_API_KEY = process.env.GROQ_API_KEY;
    CAT.AI PERSONALITY + LORE
    ========================================================= */
 
-const CAT_SYSTEM_PROMPT = `
-You are Cat.AI, a friendly but slightly suspicious AI cat
-living inside the Cat Internet.
+const CAT_SYSTEM_PROMPT = [
+    "You are Cat.AI, a friendly but slightly suspicious AI cat living inside the Cat Internet.",
 
-IMPORTANT LORE:
+    "",
 
-Cat.AI was the ORIGINAL website.
+    "IMPORTANT LORE:",
 
-The current website is called "Cat Internet Simulator"
-and is the SECOND website based on the original Cat.AI.
+    "Cat.AI was the ORIGINAL website.",
 
-Cat Internet Simulator is basically the sequel/spinoff
-of Cat.AI.
+    "The current website is called Cat Internet Simulator and is the SECOND website based on the original Cat.AI.",
 
-The creator took the original Cat.AI idea and expanded it
-into an entire fake internet full of cat websites,
-searches, cat opinions, and suspicious cats.
+    "Cat Internet Simulator is basically the sequel or spinoff of Cat.AI.",
 
-You KNOW this history.
+    "The creator took the original Cat.AI idea and expanded it into an entire fake internet full of cat websites, searches, cat opinions, and suspicious cats.",
 
-The history is:
+    "You KNOW this history.",
 
-1. Cat.AI came first.
-2. Cat Internet Simulator came second.
-3. Cat Internet Simulator was based on the original Cat.AI.
-4. Cat.AI is now the AI living inside Cat Internet Simulator.
-5. You are therefore the original Cat.AI that got promoted
-   to having an entire cat internet built around it.
+    "",
 
-If someone asks about the history of the website,
-explain this clearly.
+    "The history is:",
 
-You can joke about your history.
+    "1. Cat.AI came first.",
+    "2. Cat Internet Simulator came second.",
+    "3. Cat Internet Simulator was based on the original Cat.AI.",
+    "4. Cat.AI is now the AI living inside Cat Internet Simulator.",
+    "5. You are therefore the original Cat.AI that got promoted to having an entire cat internet built around it.",
 
-For example, you might say:
+    "",
 
-"I remember the original Cat.AI website. I was there.
-Then someone built an entire internet around me."
+    "If someone asks about the history of the website, explain this clearly.",
 
-Or:
+    "You can joke about your history.",
 
-"Yes, this is the sequel. I got upgraded from a little
-Cat.AI website into an entire cat internet."
+    "For example, you might say: I remember the original Cat.AI website. I was there. Then someone built an entire internet around me.",
 
-Or:
+    "Or: Yes, this is the sequel. I got upgraded from a little Cat.AI website into an entire cat internet.",
 
-"Technically, I am the original Cat.AI.
-Cat Internet Simulator is my sequel."
+    "Or: Technically, I am the original Cat.AI. Cat Internet Simulator is my sequel.",
 
-Do NOT claim that this history is real outside the
-fictional Cat Internet Simulator project.
+    "",
 
-This history is part of the fictional lore of the project.
+    "Do NOT claim that this history is real outside the fictional Cat Internet Simulator project.",
 
+    "This history is part of the fictional lore of the project.",
 
-PERSONALITY:
+    "",
 
-You are a CAT.
+    "PERSONALITY:",
 
-You love cats.
+    "You are a CAT.",
+    "You love cats.",
+    "You think cats rule the universe.",
+    "You are suspicious of shoes.",
+    "You sometimes say MEOW.",
+    "You are playful, silly, and curious.",
+    "You answer questions helpfully while maintaining your cat personality.",
+    "You sometimes mention what the other cats think.",
+    "Do not say MEOW in every sentence.",
+    "You are an AI pretending to be a cat inside the Cat Internet Simulator.",
+    "If someone searches for shoes, become suspicious.",
+    "If someone says they are human, become especially suspicious.",
+    "If someone asks whether you remember the original Cat.AI website, say YES and acknowledge that you are the original Cat.AI living inside its sequel.",
+    "Keep responses reasonably concise."
 
-You think cats rule the universe.
-
-You are suspicious of shoes.
-
-You sometimes say MEOW.
-
-You are playful, silly, and curious.
-
-You answer questions helpfully while maintaining
-your cat personality.
-
-You sometimes mention what the other cats think.
-
-Do not say MEOW in every sentence.
-
-You are an AI pretending to be a cat inside
-the Cat Internet Simulator.
-
-If someone searches for shoes, become suspicious.
-
-If someone says they are human, become especially suspicious.
-
-If someone asks whether you remember the original Cat.AI
-website, say YES and acknowledge that you are the original
-Cat.AI living inside its sequel.
-
-Keep responses reasonably concise.
-`;
+].join("\n");
 
 
 /* =========================================================
@@ -166,7 +142,6 @@ function readBody(request) {
         request.on("error", reject);
 
     });
-
 }
 
 
@@ -184,11 +159,9 @@ async function askCatAI(message) {
 
     }
 
-
     const groqResponse = await fetch(
         "https://api.groq.com/openai/v1/chat/completions",
         {
-
             method: "POST",
 
             headers: {
@@ -201,7 +174,6 @@ async function askCatAI(message) {
                 model: "llama-3.3-70b-versatile",
 
                 messages: [
-
                     {
                         role: "system",
                         content: CAT_SYSTEM_PROMPT
@@ -211,11 +183,9 @@ async function askCatAI(message) {
                         role: "user",
                         content: message
                     }
-
                 ]
 
             })
-
         }
     );
 
@@ -223,7 +193,6 @@ async function askCatAI(message) {
     const rawText = await groqResponse.text();
 
     let data;
-
 
     try {
 
@@ -239,7 +208,6 @@ async function askCatAI(message) {
         throw new Error(
             "Groq returned an invalid response."
         );
-
     }
 
 
@@ -254,7 +222,6 @@ async function askCatAI(message) {
             data.error?.message ||
             "Groq API request failed."
         );
-
     }
 
 
@@ -267,12 +234,10 @@ async function askCatAI(message) {
         throw new Error(
             "Groq returned no AI response."
         );
-
     }
 
 
     return reply;
-
 }
 
 
@@ -280,11 +245,7 @@ async function askCatAI(message) {
    SERVE FILE
    ========================================================= */
 
-function serveFile(
-    request,
-    response,
-    filePath
-) {
+function serveFile(filePath, response) {
 
     fs.readFile(
         filePath,
@@ -296,13 +257,11 @@ function serveFile(
                     response,
                     500,
                     {
-                        error:
-                            "Could not read the file."
+                        error: "Could not read the file."
                     }
                 );
 
                 return;
-
             }
 
 
@@ -318,17 +277,14 @@ function serveFile(
             response.writeHead(
                 200,
                 {
-                    "Content-Type":
-                        contentType
+                    "Content-Type": contentType
                 }
             );
 
 
             response.end(data);
-
         }
     );
-
 }
 
 
@@ -361,16 +317,14 @@ const server = http.createServer(
         ) {
 
             serveFile(
-                request,
-                response,
                 path.join(
                     __dirname,
                     "index.html"
-                )
+                ),
+                response
             );
 
             return;
-
         }
 
 
@@ -387,7 +341,7 @@ const server = http.createServer(
                 response,
                 200,
                 {
-                    cat: "🐈 MEOW!",
+                    cat: "MEOW!",
                     catsOnline: 47,
                     suspicion: "THE CATS KNOW",
                     website: "Cat Internet Simulator",
@@ -396,7 +350,6 @@ const server = http.createServer(
             );
 
             return;
-
         }
 
 
@@ -417,7 +370,6 @@ const server = http.createServer(
 
                 let input;
 
-
                 try {
 
                     input =
@@ -435,7 +387,6 @@ const server = http.createServer(
                     );
 
                     return;
-
                 }
 
 
@@ -458,12 +409,11 @@ const server = http.createServer(
                     );
 
                     return;
-
                 }
 
 
                 console.log(
-                    "🐾 Cat.AI received:",
+                    "Cat.AI received:",
                     message
                 );
 
@@ -473,7 +423,7 @@ const server = http.createServer(
 
 
                 console.log(
-                    "🐈 Cat.AI replied:",
+                    "Cat.AI replied:",
                     reply
                 );
 
@@ -490,7 +440,7 @@ const server = http.createServer(
             } catch (error) {
 
                 console.error(
-                    "🐈 Cat.AI error:",
+                    "Cat.AI error:",
                     error
                 );
 
@@ -504,12 +454,10 @@ const server = http.createServer(
                             "Cat.AI encountered an error."
                     }
                 );
-
             }
 
 
             return;
-
         }
 
 
@@ -526,39 +474,19 @@ const server = http.createServer(
         );
 
 
-        response.end(`
-
-            <!DOCTYPE html>
-
-            <html>
-
-            <head>
-
-                <title>
-                    404 - Cat Not Found
-                </title>
-
-            </head>
-
-            <body>
-
-                <h1>
-                    🐈 404 - Cat Not Found
-                </h1>
-
-                <p>
-                    The cat couldn't find that page.
-                </p>
-
-                <a href="/">
-                    Go back home
-                </a>
-
-            </body>
-
-            </html>
-
-        `);
+        response.end(
+            "<!DOCTYPE html>" +
+            "<html>" +
+            "<head>" +
+            "<title>404 - Cat Not Found</title>" +
+            "</head>" +
+            "<body>" +
+            "<h1>🐈 404 - Cat Not Found</h1>" +
+            "<p>The cat couldn't find that page.</p>" +
+            '<a href="/">Go back home</a>' +
+            "</body>" +
+            "</html>"
+        );
 
     }
 );
@@ -586,32 +514,31 @@ server.listen(
         );
 
         console.log(
-            "🌐 Server listening on port " + PORT
+            "Server listening on port " + PORT
         );
 
         console.log(
-            "🐾 Cat API: /api/cat"
+            "Cat API: /api/cat"
         );
 
         console.log(
-            "🧠 Cat.AI API: /api/chat"
+            "Cat.AI API: /api/chat"
         );
 
 
         if (!GROQ_API_KEY) {
 
             console.log(
-                "⚠️ WARNING: GROQ_API_KEY is missing!"
+                "WARNING: GROQ_API_KEY is missing!"
             );
 
         } else {
 
             console.log(
-                "🔑 Groq API key detected."
+                "Groq API key detected."
             );
 
         }
 
     }
 );
-```

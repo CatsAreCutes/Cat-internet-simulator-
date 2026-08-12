@@ -1,227 +1,367 @@
-html
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Cat Internet Simulator</title>
+<title>Cat Internet Simulator</title>
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #111;
-            color: #eee;
-            font-family: Arial, sans-serif;
+<style>
+    body {
+        margin: 0;
+        background: #008080;
+        color: #000000;
+        font-family: "MS Sans Serif", Tahoma, Arial, sans-serif;
+        font-size: 14px;
+    }
+
+    a {
+        color: #0000ee;
+    }
+
+    .window {
+        width: 90%;
+        max-width: 900px;
+        margin: 25px auto;
+        background: #c0c0c0;
+        border: 2px solid #ffffff;
+        border-right-color: #000000;
+        border-bottom-color: #000000;
+        box-shadow: 4px 4px 0 #000000;
+    }
+
+    .titlebar {
+        background: #000080;
+        color: white;
+        padding: 4px 6px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .title-buttons {
+        display: flex;
+        gap: 3px;
+    }
+
+    .title-button {
+        background: #c0c0c0;
+        color: #000;
+        width: 18px;
+        height: 18px;
+        text-align: center;
+        line-height: 17px;
+        border: 1px solid #fff;
+        border-right-color: #000;
+        border-bottom-color: #000;
+        font-size: 12px;
+    }
+
+    .content {
+        padding: 12px;
+    }
+
+    .panel {
+        background: #ffffff;
+        border: 2px solid #808080;
+        border-right-color: #ffffff;
+        border-bottom-color: #ffffff;
+        padding: 10px;
+        margin-bottom: 12px;
+    }
+
+    .header {
+        text-align: center;
+        font-family: "Courier New", monospace;
+    }
+
+    .header h1 {
+        margin: 5px 0;
+        font-size: 28px;
+    }
+
+    .cat {
+        font-size: 42px;
+    }
+
+    .blink {
+        color: red;
+        font-weight: bold;
+    }
+
+    .search-row {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+    }
+
+    input[type="text"] {
+        flex: 1;
+        min-width: 0;
+        padding: 4px;
+        border: 2px inset #c0c0c0;
+        background: white;
+        color: black;
+        font-family: Arial, sans-serif;
+    }
+
+    button {
+        background: #c0c0c0;
+        color: black;
+        border: 2px solid #ffffff;
+        border-right-color: #000000;
+        border-bottom-color: #000000;
+        padding: 4px 10px;
+        font-family: "MS Sans Serif", Tahoma, Arial, sans-serif;
+        cursor: pointer;
+    }
+
+    button:active {
+        border: 2px solid #000000;
+        border-right-color: #ffffff;
+        border-bottom-color: #ffffff;
+    }
+
+    .results {
+        display: none;
+    }
+
+    .result-box {
+        border: 1px solid #000000;
+        background: #ffffcc;
+        padding: 10px;
+        margin-top: 8px;
+    }
+
+    .result-title {
+        background: #000080;
+        color: white;
+        padding: 3px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .cat-opinion {
+        background: #eeeeee;
+        border: 1px dotted #555555;
+        padding: 8px;
+        margin-top: 10px;
+    }
+
+    .suspicion {
+        text-align: center;
+        font-family: "Courier New", monospace;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .upload-box {
+        background: #eeeeee;
+        border: 2px inset #c0c0c0;
+        padding: 10px;
+    }
+
+    input[type="file"] {
+        background: white;
+        border: 2px inset #c0c0c0;
+        padding: 3px;
+        max-width: 100%;
+    }
+
+    #fileResult {
+        margin-top: 10px;
+    }
+
+    .file-response {
+        background: #ffffcc;
+        border: 1px solid #000000;
+        padding: 10px;
+    }
+
+    .status {
+        font-family: "Courier New", monospace;
+        background: #000000;
+        color: #00ff00;
+        padding: 8px;
+        border: 2px inset #808080;
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 11px;
+        margin-top: 15px;
+    }
+
+    pre {
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    @media (max-width: 600px) {
+        .window {
+            width: 96%;
+            margin: 10px auto;
         }
 
-        header {
-            padding: 25px;
-            text-align: center;
-            background: #1b1b1b;
-            border-bottom: 2px solid #333;
+        .search-row {
+            flex-direction: column;
+            align-items: stretch;
         }
 
-        header h1 {
-            margin: 0;
-            font-size: 32px;
+        .search-row button {
+            width: 100%;
         }
-
-        header p {
-            color: #aaa;
-        }
-
-        main {
-            max-width: 900px;
-            margin: 30px auto;
-            padding: 20px;
-        }
-
-        .box {
-            background: #1b1b1b;
-            border: 1px solid #333;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        input[type="text"] {
-            width: calc(100% - 120px);
-            padding: 14px;
-            border: 1px solid #444;
-            border-radius: 8px;
-            background: #111;
-            color: white;
-            box-sizing: border-box;
-        }
-
-        button {
-            padding: 14px 18px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .search-button {
-            margin-left: 8px;
-        }
-
-        .upload-button {
-            margin-top: 10px;
-        }
-
-        input[type="file"] {
-            display: block;
-            margin-top: 12px;
-            color: #ddd;
-        }
-
-        #chatResult,
-        #fileResult {
-            margin-top: 20px;
-            line-height: 1.6;
-            white-space: normal;
-        }
-
-        .cat {
-            font-size: 45px;
-        }
-
-        .result-title {
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
-
-        .response {
-            background: #111;
-            border-radius: 10px;
-            padding: 18px;
-            border: 1px solid #333;
-        }
-
-        .file-name {
-            color: #aaa;
-            margin-top: 10px;
-        }
-
-        pre {
-            background: #080808;
-            padding: 15px;
-            border-radius: 8px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-    </style>
+    }
+</style>
 </head>
 
 <body>
 
-<header>
-    <div class="cat">🐈</div>
+<div class="window">
 
-    <h1>CAT INTERNET SIMULATOR</h1>
+    <div class="titlebar">
+        <span>🐈 Cat Internet Simulator</span>
 
-    <p>
-        The second website based on the original Cat.AI
-    </p>
-</header>
+        <div class="title-buttons">
+            <div class="title-button">_</div>
+            <div class="title-button">□</div>
+            <div class="title-button">X</div>
+        </div>
+    </div>
 
+    <div class="content">
 
-<main>
+        <!-- HEADER -->
 
-    <!-- =========================
-         CAT.AI SEARCH
-         ========================= -->
+        <div class="panel header">
 
-    <div class="box">
+            <div class="cat">🐈</div>
 
-        <h2>🐈 CAT.AI</h2>
+            <h1>CAT INTERNET SIMULATOR</h1>
 
-        <p>
-            Ask the original Cat.AI anything.
-        </p>
+            <div>
+                <b>Welcome to the Cat Internet!</b>
+            </div>
 
-        <div>
-            <input
-                type="text"
-                id="message"
-                placeholder="Ask Cat.AI something..."
-                autocomplete="off"
-            >
+            <p>
+                <span class="blink">NEW!</span>
+                The second website based on Cat.AI
+            </p>
 
-            <button
-                class="search-button"
-                onclick="askCatAI()"
-            >
-                Search
-            </button>
         </div>
 
-        <div id="chatResult"></div>
+
+        <!-- SEARCH -->
+
+        <div class="panel">
+
+            <div class="result-title">
+                🐈 CAT.AI SEARCH
+            </div>
+
+            <p>
+                Ask Cat.AI something:
+            </p>
+
+            <div class="search-row">
+
+                <input
+                    type="text"
+                    id="message"
+                    placeholder="Type your search here..."
+                    autocomplete="off"
+                >
+
+                <button onclick="askCatAI()">
+                    SEARCH
+                </button>
+
+            </div>
+
+            <div id="chatResult"></div>
+
+        </div>
+
+
+        <!-- FILE UPLOAD -->
+
+        <div class="panel">
+
+            <div class="result-title">
+                📂 CAT.AI FILE INVESTIGATOR
+            </div>
+
+            <div class="upload-box">
+
+                <p>
+                    <b>Show Cat.AI one of your files!</b>
+                </p>
+
+                <p>
+                    Cat.AI can read source code and text.
+                    It does not execute uploaded files.
+                </p>
+
+                <p>
+                    Allowed files:
+                    <b>.js .html .css .json .txt .md</b>
+                </p>
+
+                <input
+                    type="file"
+                    id="catFile"
+                    accept=".js,.html,.css,.json,.txt,.md"
+                >
+
+                <br><br>
+
+                <button onclick="uploadCatFile()">
+                    🧠 LET CAT.AI READ IT
+                </button>
+
+                <div id="fileResult"></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CAT STATUS -->
+
+        <div class="panel">
+
+            <div class="result-title">
+                🐾 CAT INTERNET STATUS
+            </div>
+
+            <div class="status" id="catStatus">
+                Connecting to the cats...
+            </div>
+
+        </div>
+
+
+        <div class="footer">
+
+            Cat Internet Simulator<br>
+
+            <b>Cat.AI was here first.</b><br>
+
+            Best viewed with a suspicious cat nearby. 🐈
+
+        </div>
 
     </div>
 
-
-    <!-- =========================
-         FILE UPLOAD
-         ========================= -->
-
-    <div class="box">
-
-        <h2>📂 Show Cat.AI a File</h2>
-
-        <p>
-            Upload source code or text and let Cat.AI inspect it.
-        </p>
-
-        <p>
-            <small>
-                Allowed: .js, .html, .css, .json, .txt, .md
-            </small>
-        </p>
-
-        <input
-            type="file"
-            id="catFile"
-            accept=".js,.html,.css,.json,.txt,.md"
-        >
-
-        <button
-            class="upload-button"
-            onclick="uploadCatFile()"
-        >
-            🧠 Let Cat.AI Read It
-        </button>
-
-        <div id="fileResult"></div>
-
-    </div>
-
-
-    <!-- =========================
-         CAT STATUS
-         ========================= -->
-
-    <div class="box">
-
-        <h2>🐾 Cat Status</h2>
-
-        <p id="catStatus">
-            Checking the cats...
-        </p>
-
-    </div>
-
-</main>
+</div>
 
 
 <script>
 
 /* =========================================================
-   ASK CAT.AI
+   CAT.AI CHAT
    ========================================================= */
 
 async function askCatAI() {
@@ -235,21 +375,22 @@ async function askCatAI() {
     const message =
         input.value.trim();
 
+
     if (!message) {
 
         result.innerHTML =
-            "<div class='response'>" +
-            "🐈 Meow? You didn't ask anything!" +
-            "</div>";
+            '<div class="result-box">' +
+            '🐈 MEOW? You forgot to type something!' +
+            '</div>';
 
         return;
     }
 
 
     result.innerHTML =
-        "<div class='response'>" +
-        "🐾 Cat.AI is thinking..." +
-        "</div>";
+        '<div class="result-box">' +
+        '🐾 Cat.AI is thinking... ' +
+        '</div>';
 
 
     try {
@@ -286,29 +427,40 @@ async function askCatAI() {
 
 
         result.innerHTML =
-            "<div class='result-title'>" +
-            "🧠 Cat.AI" +
-            "</div>" +
 
-            "<div class='response'>" +
+            '<div class="result-box">' +
+
+            '<div class="result-title">' +
+            '🧠 Cat.AI' +
+            '</div>' +
+
+            '<div>' +
             escapeHTML(data.reply)
                 .replace(/\n/g, "<br>") +
-            "</div>";
+            '</div>' +
+
+            '</div>';
 
 
     } catch (error) {
 
         result.innerHTML =
-            "<div class='response'>" +
-            "😿 Cat.AI couldn't connect to its brain.<br><br>" +
+
+            '<div class="result-box">' +
+
+            '<b>😿 Cat.AI couldn\'t connect to its brain.</b>' +
+
+            '<br><br>' +
+
             escapeHTML(error.message) +
-            "</div>";
+
+            '</div>';
     }
 }
 
 
 /* =========================================================
-   UPLOAD FILE TO CAT.AI
+   FILE UPLOAD
    ========================================================= */
 
 async function uploadCatFile() {
@@ -323,9 +475,9 @@ async function uploadCatFile() {
     if (!fileInput.files.length) {
 
         result.innerHTML =
-            "<div class='response'>" +
-            "🐈 Please choose a file first." +
-            "</div>";
+            '<div class="file-response">' +
+            '🐈 Please choose a file first.' +
+            '</div>';
 
         return;
     }
@@ -336,11 +488,11 @@ async function uploadCatFile() {
 
 
     result.innerHTML =
-        "<div class='response'>" +
-        "🐾 Cat.AI is reading <b>" +
+        '<div class="file-response">' +
+        '🐾 Cat.AI is reading <b>' +
         escapeHTML(file.name) +
-        "</b>..." +
-        "</div>";
+        '</b>...' +
+        '</div>';
 
 
     try {
@@ -367,6 +519,7 @@ async function uploadCatFile() {
 
                         content:
                             content
+
                     })
                 }
             );
@@ -386,24 +539,35 @@ async function uploadCatFile() {
 
 
         result.innerHTML =
-            "<div class='result-title'>" +
-            "🧠 Cat.AI examined: " +
-            escapeHTML(data.filename) +
-            "</div>" +
 
-            "<div class='response'>" +
+            '<div class="file-response">' +
+
+            '<div class="result-title">' +
+            '🧠 Cat.AI examined: ' +
+            escapeHTML(data.filename) +
+            '</div>' +
+
+            '<div>' +
             escapeHTML(data.reply)
                 .replace(/\n/g, "<br>") +
-            "</div>";
+            '</div>' +
+
+            '</div>';
 
 
     } catch (error) {
 
         result.innerHTML =
-            "<div class='response'>" +
-            "😿 Cat.AI couldn't read the file.<br><br>" +
+
+            '<div class="file-response">' +
+
+            '<b>😿 Cat.AI couldn\'t read the file.</b>' +
+
+            '<br><br>' +
+
             escapeHTML(error.message) +
-            "</div>";
+
+            '</div>';
     }
 }
 
@@ -428,8 +592,10 @@ async function getCatStatus() {
             await response.json();
 
 
-        status.innerHTML =
-            "Done. | 🐈 Cats online: " +
+        status.textContent =
+
+            "Done. | " +
+            "🐈 Cats online: " +
             data.catsOnline +
             " | 😼 Suspicion level: " +
             data.suspicion;
@@ -438,13 +604,13 @@ async function getCatStatus() {
     } catch (error) {
 
         status.textContent =
-            "😿 The cats are offline.";
+            "😿 The cats cannot be reached.";
     }
 }
 
 
 /* =========================================================
-   ENTER KEY SUPPORT
+   ENTER KEY
    ========================================================= */
 
 document
@@ -489,3 +655,4 @@ getCatStatus();
 
 </body>
 </html>
+

@@ -1,383 +1,768 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cat Internet Simulator</title>
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+    Cat Internet Simulator
+</title>
+
 
 <style>
+
+/* =====================================================
+   OLD INTERNET / BROWSER STYLE
+===================================================== */
+
 * {
     box-sizing: border-box;
 }
 
-html, body {
-    margin: 0;
+html,
+body {
     width: 100%;
     height: 100%;
+    margin: 0;
 }
 
 body {
+
     background: #008080;
-    font-family: "Courier New", monospace;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 13px;
+
     overflow: hidden;
 }
 
+
+/* =====================================================
+   BROWSER
+===================================================== */
+
 .browser {
+
     width: 100vw;
     height: 100vh;
+
     display: flex;
     flex-direction: column;
+
     background: #c0c0c0;
+
     border: 3px outset white;
 }
 
+
+/* =====================================================
+   TITLE BAR
+===================================================== */
+
 .titlebar {
-    height: 34px;
+
+    height: 30px;
+
     flex-shrink: 0;
+
     display: flex;
     align-items: center;
-    padding: 4px 8px;
+
+    padding: 3px 6px;
+
     color: white;
-    background: linear-gradient(to right, #000080, #1084d0);
-    font-family: Arial, sans-serif;
+
+    background:
+        linear-gradient(
+            to right,
+            #000080,
+            #1084d0
+        );
+
     font-weight: bold;
 }
 
 .title-buttons {
+
     margin-left: auto;
 }
 
 .title-buttons button {
-    width: 25px;
-    height: 22px;
+
+    width: 23px;
+    height: 21px;
+
     padding: 0;
+
     margin-left: 2px;
+
     border: 2px outset white;
+
     background: #c0c0c0;
+
     font-weight: bold;
 }
 
+
+/* =====================================================
+   TOOLBAR
+===================================================== */
+
 .toolbar {
-    min-height: 44px;
+
+    min-height: 38px;
+
     display: flex;
     align-items: center;
-    gap: 5px;
-    padding: 5px;
+
+    gap: 4px;
+
+    padding: 4px;
+
     border-bottom: 2px inset white;
 }
 
 .toolbar button {
-    height: 30px;
-    padding: 4px 10px;
+
+    height: 27px;
+
+    padding: 3px 8px;
+
     border: 2px outset white;
+
     background: #c0c0c0;
+
     cursor: pointer;
 }
 
-.address {
-    flex: 1;
-    height: 29px;
-    padding: 4px 7px;
-    border: 2px inset white;
-    background: white;
-    font-family: "Courier New", monospace;
+.toolbar button:active {
+
+    border-style: inset;
 }
+
+.address {
+
+    flex: 1;
+
+    height: 27px;
+
+    padding: 3px 6px;
+
+    border: 2px inset white;
+
+    background: white;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   MAIN PAGE
+===================================================== */
 
 .page {
+
     flex: 1;
+
     min-height: 0;
+
     display: flex;
+
     background: white;
 }
 
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
 .sidebar {
-    width: 185px;
+
+    width: 175px;
+
     flex-shrink: 0;
-    padding: 8px;
+
+    padding: 6px;
+
     border-right: 3px ridge white;
+
     background: #d4d0c8;
+
     overflow-y: auto;
 }
 
 .sidebar-title {
-    padding: 7px;
+
+    padding: 6px;
+
     color: white;
+
     background: #000080;
+
     text-align: center;
+
     font-weight: bold;
 }
 
 .side-button {
+
     width: 100%;
-    margin-top: 7px;
-    padding: 8px;
+
+    margin-top: 5px;
+
+    padding: 6px;
+
     border: 2px outset white;
+
     background: #c0c0c0;
+
     text-align: left;
+
     cursor: pointer;
+
+    font-size: 12px;
 }
 
-.side-button:active,
-.toolbar button:active {
+.side-button:active {
+
     border-style: inset;
 }
 
+
+/* =====================================================
+   STATUS
+===================================================== */
+
 .status {
-    margin-top: 12px;
-    padding: 8px;
+
+    margin-top: 9px;
+
+    padding: 7px;
+
     border: 2px inset white;
+
     background: white;
-    font-size: 12px;
+
+    font-size: 11px;
 }
 
+
+/* =====================================================
+   SUSPICION
+===================================================== */
+
 .suspicion {
-    margin-top: 10px;
-    padding: 8px;
+
+    margin-top: 8px;
+
+    padding: 7px;
+
     border: 2px inset white;
+
     background: #ffffcc;
-    font-size: 12px;
+
+    font-size: 11px;
 }
 
 .suspicion-bar {
-    height: 15px;
-    margin-top: 5px;
+
+    height: 13px;
+
+    margin-top: 4px;
+
     border: 2px inset white;
+
     background: white;
 }
 
 .suspicion-fill {
+
     width: 0%;
+
     height: 100%;
+
     background: red;
 }
 
+
+/* =====================================================
+   CONTENT
+===================================================== */
+
 .content {
+
     flex: 1;
+
     min-width: 0;
     min-height: 0;
+
     overflow: auto;
+
     background: white;
 }
 
+
+/* =====================================================
+   HEADER
+===================================================== */
+
 .header {
-    padding: 14px;
+
+    padding: 10px;
+
     color: white;
-    background: linear-gradient(90deg, #000080, #800080, #000080);
-    border-bottom: 4px ridge white;
+
+    background:
+        linear-gradient(
+            90deg,
+            #000080,
+            #800080,
+            #000080
+        );
+
+    border-bottom: 3px ridge white;
 }
 
 .header h1 {
-    margin: 0;
+
+    margin: 0 0 3px 0;
+
     font-family: Georgia, serif;
+
+    font-size: 24px;
 }
 
+
+/* =====================================================
+   BODY
+===================================================== */
+
 .body {
-    padding: 18px;
+
+    padding: 12px;
 }
 
 .notice {
-    padding: 10px;
-    margin-bottom: 15px;
+
+    padding: 8px;
+
+    margin-bottom: 12px;
+
     border: 2px dashed #800080;
+
     background: #ffffcc;
 }
 
+
+/* =====================================================
+   CARDS
+===================================================== */
+
 .cards {
+
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: 15px;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(180px, 1fr)
+        );
+
+    gap: 10px;
 }
 
 .card {
-    min-height: 150px;
-    padding: 13px;
+
+    min-height: 120px;
+
+    padding: 10px;
+
     border: 3px outset #eee;
+
     background: #e8e8e8;
 }
 
 .card h2 {
-    margin-top: 0;
+
+    margin: 5px 0;
+
     color: #000080;
+
+    font-size: 17px;
 }
 
 .card button {
-    padding: 7px 12px;
+
+    padding: 5px 10px;
+
     border: 2px outset white;
+
     background: #c0c0c0;
+
     cursor: pointer;
 }
 
 .cat {
-    font-size: 60px;
+
+    font-size: 35px;
+
     text-align: center;
 }
 
-.footer {
-    margin-top: 25px;
-    padding: 8px;
-    border-top: 2px solid #808080;
+
+/* =====================================================
+   SEARCH PAGE
+===================================================== */
+
+.search-page {
+
+    padding: 10px;
+}
+
+.search-header {
+
+    padding: 7px;
+
+    color: white;
+
+    background: #000080;
+
+    font-weight: bold;
+}
+
+.search-box {
+
+    padding: 9px;
+
+    background: #d4d0c8;
+
+    border-bottom: 2px solid #808080;
+}
+
+.search-box input {
+
+    width:
+        calc(100% - 75px);
+
+    height: 26px;
+
+    padding: 3px 6px;
+
+    border: 2px inset white;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 12px;
+}
+
+.search-box button {
+
+    height: 26px;
+
+    padding: 3px 10px;
+
+    border: 2px outset white;
+
+    background: #c0c0c0;
+
+    cursor: pointer;
+}
+
+
+/* =====================================================
+   AI SEARCH RESULTS
+===================================================== */
+
+.search-results {
+
+    padding: 5px 10px;
+}
+
+.search-status {
+
+    padding: 6px;
+
+    margin-bottom: 10px;
+
+    background: #eeeeee;
+
+    border: 1px inset white;
+
+    font-family:
+        "Courier New",
+        monospace;
+
     font-size: 11px;
-    text-align: center;
 }
 
-/* CHAT */
+.result {
+
+    margin: 14px 0;
+
+    padding-bottom: 10px;
+
+    border-bottom: 1px solid #cccccc;
+}
+
+.result-title {
+
+    color: #0000ee;
+
+    text-decoration: underline;
+
+    font-size: 16px;
+
+    cursor: pointer;
+}
+
+.result-url {
+
+    color: #008000;
+
+    font-size: 11px;
+
+    margin-top: 2px;
+}
+
+.result p {
+
+    margin: 4px 0;
+
+    line-height: 1.3;
+}
+
+
+/* =====================================================
+   CHAT
+===================================================== */
 
 .chat {
+
     height: 100%;
+
     display: flex;
+
     flex-direction: column;
+
     background: #d4d0c8;
 }
 
 .chat-title {
-    padding: 8px;
+
+    padding: 7px;
+
     color: white;
+
     background: #800080;
+
     font-weight: bold;
 }
 
 .chat-messages {
+
     flex: 1;
+
     min-height: 0;
+
     overflow-y: auto;
-    padding: 10px;
+
+    padding: 8px;
+
     background: #111;
+
     color: white;
+
     border: 3px inset white;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 12px;
 }
 
 .message {
-    margin: 8px 0;
-    padding: 8px;
+
+    margin: 7px 0;
+
+    padding: 6px;
+
     border: 1px solid #555;
+
     white-space: pre-wrap;
+
+    line-height: 1.3;
 }
 
 .message.user {
+
     color: #ffff66;
 }
 
 .message.cat {
+
     color: #66ff99;
 }
 
 .chat-input {
+
     display: flex;
-    gap: 5px;
-    padding: 7px;
+
+    gap: 4px;
+
+    padding: 5px;
 }
 
 .chat-input input {
+
     flex: 1;
+
     min-width: 0;
-    padding: 8px;
+
+    height: 27px;
+
+    padding: 4px;
+
     border: 2px inset white;
-    font-family: "Courier New", monospace;
+
+    font-family:
+        "Courier New",
+        monospace;
+
+    font-size: 12px;
 }
 
 .chat-input button {
-    padding: 8px 15px;
+
+    height: 27px;
+
+    padding: 3px 12px;
+
     border: 2px outset white;
+
     background: #c0c0c0;
+
     cursor: pointer;
 }
 
-/* SEARCH */
 
-.search-area {
-    padding: 15px;
-    background: #e8e8e8;
-    border-bottom: 2px solid #808080;
-}
-
-.search-area input {
-    width: 70%;
-    padding: 8px;
-    border: 2px inset white;
-}
-
-.search-area button {
-    padding: 8px 12px;
-    border: 2px outset white;
-    background: #c0c0c0;
-}
-
-.result {
-    margin: 18px;
-}
-
-.result-title {
-    color: #0000ee;
-    text-decoration: underline;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-/* GAME OVER */
+/* =====================================================
+   GAME OVER
+===================================================== */
 
 .game-over {
+
     position: fixed;
+
     inset: 0;
+
     z-index: 9999;
+
     display: none;
+
     align-items: center;
+
     justify-content: center;
+
     background: black;
+
     color: red;
+
     text-align: center;
 }
 
 .game-over.show {
+
     display: flex;
 }
 
 .game-box {
-    width: min(650px, 90%);
-    padding: 35px;
+
+    width: min(600px, 90%);
+
+    padding: 30px;
+
     border: 5px double red;
+
     background: #080808;
-    box-shadow: 0 0 40px red;
+
+    box-shadow:
+        0 0 40px red;
 }
 
 .game-box .big-cat {
-    font-size: 80px;
+
+    font-size: 60px;
 }
 
 .game-box h1 {
-    font-size: 42px;
+
+    font-size: 36px;
 }
 
 .game-box p {
+
     color: white;
 }
 
 .restart {
-    padding: 10px 25px;
+
+    padding: 8px 20px;
+
     border: 3px outset white;
+
     background: #c0c0c0;
+
     cursor: pointer;
 }
 
+
 @media(max-width:700px) {
+
     .sidebar {
+
         display: none;
     }
+
 }
+
 </style>
+
 </head>
+
 
 <body>
 
+
 <div class="browser">
+
 
     <div class="titlebar">
 
         🐈 Cat Internet Simulator
 
         <div class="title-buttons">
+
             <button>_</button>
             <button>□</button>
             <button>×</button>
+
         </div>
 
     </div>
@@ -385,9 +770,17 @@ body {
 
     <div class="toolbar">
 
-        <button onclick="goBack()">◀ Back</button>
-        <button onclick="goHome()">🏠 Home</button>
-        <button onclick="reloadPage()">⟳</button>
+        <button onclick="goBack()">
+            ◀ Back
+        </button>
+
+        <button onclick="goHome()">
+            🏠 Home
+        </button>
+
+        <button onclick="reloadPage()">
+            ⟳
+        </button>
 
         <input
             id="address"
@@ -396,12 +789,15 @@ body {
             onkeydown="addressKey(event)"
         >
 
-        <button onclick="goAddress()">Go</button>
+        <button onclick="goAddress()">
+            Go
+        </button>
 
     </div>
 
 
     <div class="page">
+
 
         <aside class="sidebar">
 
@@ -409,47 +805,69 @@ body {
                 CAT INTERNET
             </div>
 
+
             <button
                 class="side-button"
                 onclick="goHome()">
+
                 🏠 Cat Home
+
             </button>
+
 
             <button
                 class="side-button"
                 onclick="showSearch()">
+
                 🔎 Cat Search
+
             </button>
+
 
             <button
                 class="side-button"
                 onclick="showCatAI()">
+
                 🐈 Cat.AI
+
             </button>
+
 
             <button
                 class="side-button"
                 onclick="openOriginalCatAI()">
+
                 🐈 Original Cat.AI
+
             </button>
+
 
             <button
                 class="side-button"
                 onclick="showCats()">
+
                 🐱 Cat Pictures
+
             </button>
+
 
             <button
                 class="side-button"
                 onclick="showNews()">
+
                 📰 Cat News
+
             </button>
+
 
             <button
                 class="side-button"
                 onclick="showAbout()">
+
                 ℹ️ About
+
             </button>
+
 
             <div class="status">
 
@@ -465,6 +883,7 @@ body {
 
             </div>
 
+
             <div class="suspicion">
 
                 <b>HUMAN SUSPICION</b>
@@ -478,7 +897,9 @@ body {
 
                 </div>
 
-                <span id="suspicionText">0%</span>
+                <span id="suspicionText">
+                    0%
+                </span>
 
             </div>
 
@@ -490,9 +911,11 @@ body {
             class="content">
         </main>
 
+
     </div>
 
 </div>
+
 
 
 <div
@@ -501,22 +924,36 @@ body {
 
     <div class="game-box">
 
-        <div class="big-cat">🐈</div>
+        <div class="big-cat">
+            🐈
+        </div>
 
-        <h1>GAME OVER</h1>
+        <h1>
+            GAME OVER
+        </h1>
 
-        <p>Cat.AI has discovered the truth.</p>
+        <p>
+            Cat.AI has discovered the truth.
+        </p>
 
-        <p>maybe dont say you are a human lmao</p>
+        <p>
+            maybe dont say you are a human lmao
+        </p>
 
-        <p>Good, YOU DIED-</p>
+        <p>
+            Good, YOU DIED-
+        </p>
 
-        <p>Meow.</p>
+        <p>
+            Meow.
+        </p>
 
         <button
             class="restart"
             onclick="restartGame()">
+
             🔄 Restart
+
         </button>
 
     </div>
@@ -524,7 +961,9 @@ body {
 </div>
 
 
+
 <script>
+
 
 /* =====================================================
    STATE
@@ -544,19 +983,29 @@ let historyIndex = 0;
 ===================================================== */
 
 const content =
-    document.getElementById("content");
+    document.getElementById(
+        "content"
+    );
 
 const address =
-    document.getElementById("address");
+    document.getElementById(
+        "address"
+    );
 
 const suspicionFill =
-    document.getElementById("suspicionFill");
+    document.getElementById(
+        "suspicionFill"
+    );
 
 const suspicionText =
-    document.getElementById("suspicionText");
+    document.getElementById(
+        "suspicionText"
+    );
 
 const gameOver =
-    document.getElementById("gameOver");
+    document.getElementById(
+        "gameOver"
+    );
 
 
 /* =====================================================
@@ -566,7 +1015,9 @@ const gameOver =
 function navigate(url) {
 
     if (
-        history[history.length - 1] !== url
+        history[
+            history.length - 1
+        ] !== url
     ) {
 
         history =
@@ -583,36 +1034,47 @@ function navigate(url) {
     }
 
     address.value = url;
+
 }
 
 
 function goBack() {
 
-    if (historyIndex <= 0)
+    if (
+        historyIndex <= 0
+    )
         return;
 
     historyIndex--;
 
     const url =
-        history[historyIndex];
+        history[
+            historyIndex
+        ];
 
     address.value = url;
 
     renderURL(url);
+
 }
 
 
 function goHome() {
 
-    navigate("cat://home");
+    navigate(
+        "cat://home"
+    );
 
     renderHome();
+
 }
 
 
 function reloadPage() {
 
-    renderURL(address.value);
+    renderURL(
+        address.value
+    );
 
 }
 
@@ -628,12 +1090,15 @@ function goAddress() {
     navigate(url);
 
     renderURL(url);
+
 }
 
 
 function addressKey(event) {
 
-    if (event.key === "Enter") {
+    if (
+        event.key === "Enter"
+    ) {
 
         goAddress();
 
@@ -660,7 +1125,9 @@ function openOriginalCatAI() {
 
 function renderHome() {
 
-    navigate("cat://home");
+    address.value =
+        "cat://home";
+
 
     content.innerHTML = `
 
@@ -678,6 +1145,7 @@ function renderHome() {
 
         <div class="body">
 
+
             <div class="notice">
 
                 ⚠️ IMPORTANT INTERNET NOTICE:
@@ -692,19 +1160,26 @@ function renderHome() {
 
             <div class="cards">
 
+
                 <div class="card">
 
-                    <div class="cat">🐈</div>
+                    <div class="cat">
+                        🐈
+                    </div>
 
-                    <h2>Cat.AI</h2>
+                    <h2>
+                        Cat.AI
+                    </h2>
 
                     <p>
-                        Talk to the REAL Cat.AI
-                        powered by the server.
+                        Talk to the REAL Cat.AI.
                     </p>
 
-                    <button onclick="showCatAI()">
+                    <button
+                        onclick="showCatAI()">
+
                         ENTER
+
                     </button>
 
                 </div>
@@ -712,16 +1187,23 @@ function renderHome() {
 
                 <div class="card">
 
-                    <div class="cat">🔎</div>
+                    <div class="cat">
+                        🔎
+                    </div>
 
-                    <h2>Cat Search</h2>
+                    <h2>
+                        Cat Search
+                    </h2>
 
                     <p>
                         Search the fake Cat Internet.
                     </p>
 
-                    <button onclick="showSearch()">
+                    <button
+                        onclick="showSearch()">
+
                         SEARCH
+
                     </button>
 
                 </div>
@@ -729,16 +1211,23 @@ function renderHome() {
 
                 <div class="card">
 
-                    <div class="cat">🐱</div>
+                    <div class="cat">
+                        🐱
+                    </div>
 
-                    <h2>Cat Pictures</h2>
+                    <h2>
+                        Cat Pictures
+                    </h2>
 
                     <p>
                         Extremely important research.
                     </p>
 
-                    <button onclick="showCats()">
+                    <button
+                        onclick="showCats()">
+
                         VIEW CATS
+
                     </button>
 
                 </div>
@@ -746,19 +1235,27 @@ function renderHome() {
 
                 <div class="card">
 
-                    <div class="cat">📰</div>
+                    <div class="cat">
+                        📰
+                    </div>
 
-                    <h2>Cat News</h2>
+                    <h2>
+                        Cat News
+                    </h2>
 
                     <p>
                         Completely legitimate cat news.
                     </p>
 
-                    <button onclick="showNews()">
+                    <button
+                        onclick="showNews()">
+
                         READ
+
                     </button>
 
                 </div>
+
 
             </div>
 
@@ -773,8 +1270,11 @@ function renderHome() {
 
             </div>
 
+
         </div>
+
     `;
+
 }
 
 
@@ -784,11 +1284,15 @@ function renderHome() {
 
 function showCatAI() {
 
-    navigate("cat://cat.ai");
+    navigate(
+        "cat://cat.ai"
+    );
+
 
     content.innerHTML = `
 
         <div class="chat">
+
 
             <div class="chat-title">
 
@@ -800,6 +1304,7 @@ function showCatAI() {
             <div
                 id="chatMessages"
                 class="chat-messages">
+
 
                 <div class="message cat">
 
@@ -815,6 +1320,7 @@ function showCatAI() {
                     What do you want?
 
                 </div>
+
 
             </div>
 
@@ -838,19 +1344,25 @@ function showCatAI() {
 
             </div>
 
+
         </div>
+
     `;
 
 
     const input =
-        document.getElementById("catInput");
+        document.getElementById(
+            "catInput"
+        );
 
 
     input.addEventListener(
         "keydown",
         function(event) {
 
-            if (event.key === "Enter") {
+            if (
+                event.key === "Enter"
+            ) {
 
                 sendCatMessage();
 
@@ -866,22 +1378,31 @@ function showCatAI() {
 
 
 /* =====================================================
-   REAL AI REQUEST
+   REAL CAT.AI CHAT REQUEST
 ===================================================== */
 
 async function sendCatMessage() {
 
     const input =
-        document.getElementById("catInput");
+        document.getElementById(
+            "catInput"
+        );
 
     const messages =
-        document.getElementById("chatMessages");
+        document.getElementById(
+            "chatMessages"
+        );
 
     const sendButton =
-        document.getElementById("sendButton");
+        document.getElementById(
+            "sendButton"
+        );
 
 
-    if (!input || !messages)
+    if (
+        !input ||
+        !messages
+    )
         return;
 
 
@@ -892,8 +1413,6 @@ async function sendCatMessage() {
     if (!text)
         return;
 
-
-    /* USER MESSAGE */
 
     addMessage(
         "You: " + text,
@@ -906,18 +1425,24 @@ async function sendCatMessage() {
     sendButton.disabled = true;
 
 
-    /* THINKING */
-
     const thinking =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
+
 
     thinking.className =
         "message cat";
 
+
     thinking.textContent =
         "🐈 Cat.AI is thinking...";
 
-    messages.appendChild(thinking);
+
+    messages.appendChild(
+        thinking
+    );
+
 
     messages.scrollTop =
         messages.scrollHeight;
@@ -929,17 +1454,21 @@ async function sendCatMessage() {
             await fetch(
                 "/api/chat",
                 {
+
                     method: "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json"
+
                     },
 
                     body:
                         JSON.stringify({
                             message: text
                         })
+
                 }
             );
 
@@ -951,7 +1480,9 @@ async function sendCatMessage() {
         thinking.remove();
 
 
-        if (!response.ok) {
+        if (
+            !response.ok
+        ) {
 
             throw new Error(
                 data.error ||
@@ -961,8 +1492,6 @@ async function sendCatMessage() {
         }
 
 
-        /* REAL GROQ RESPONSE */
-
         addMessage(
             "🐈 Cat.AI: " +
             data.reply,
@@ -970,7 +1499,8 @@ async function sendCatMessage() {
         );
 
 
-    } catch (error) {
+    }
+    catch (error) {
 
         thinking.remove();
 
@@ -983,7 +1513,6 @@ async function sendCatMessage() {
 
 
         console.error(
-            "Cat.AI error:",
             error
         );
 
@@ -1017,7 +1546,9 @@ function addMessage(
 
 
     const message =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     message.className =
@@ -1040,64 +1571,134 @@ function addMessage(
 
 
 /* =====================================================
-   SEARCH
+   AI CAT SEARCH PAGE
 ===================================================== */
 
 function showSearch() {
 
-    navigate("cat://search");
+    navigate(
+        "cat://search"
+    );
+
 
     content.innerHTML = `
 
-        <div class="search-area">
+        <div class="search-page">
 
-            <h2>🔎 Cat Search</h2>
 
-            <input
-                id="searchInput"
-                placeholder="Search the Cat Internet..."
-            >
+            <div class="search-header">
 
-            <button onclick="performSearch()">
-                SEARCH
-            </button>
+                🔎 CAT SEARCH
+
+            </div>
+
+
+            <div class="search-box">
+
+                <input
+                    id="searchInput"
+                    placeholder="Search the Cat Internet..."
+                    autocomplete="off"
+                >
+
+
+                <button
+                    id="searchButton"
+                    onclick="performSearch()">
+
+                    Search
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="searchResults"
+                class="search-results">
+
+
+                <div class="search-status">
+
+                    Cat Search is ready.
+
+                    <br>
+
+                    Search anything.
+                    The cats will figure it out.
+
+                </div>
+
+
+                <p>
+
+                    Popular searches:
+
+                    <b>
+                        cats
+                    </b>
+
+                    ·
+
+                    <b>
+                        shoes
+                    </b>
+
+                    ·
+
+                    <b>
+                        dragons
+                    </b>
+
+                    ·
+
+                    <b>
+                        humans
+                    </b>
+
+                </p>
+
+
+            </div>
+
 
         </div>
 
-
-        <div id="searchResults">
-
-            <p style="padding:15px">
-                Search for something.
-            </p>
-
-        </div>
     `;
 
 
-    document
-        .getElementById("searchInput")
-        .addEventListener(
-            "keydown",
-            function(event) {
+    const input =
+        document.getElementById(
+            "searchInput"
+        );
 
-                if (event.key === "Enter") {
 
-                    performSearch();
+    input.addEventListener(
+        "keydown",
+        function(event) {
 
-                }
+            if (
+                event.key === "Enter"
+            ) {
+
+                performSearch();
 
             }
-        );
+
+        }
+    );
+
+
+    input.focus();
 
 }
 
 
 /* =====================================================
-   SEARCH RESULTS
+   AI SEARCH
 ===================================================== */
 
-function performSearch() {
+async function performSearch() {
 
     const input =
         document.getElementById(
@@ -1109,6 +1710,19 @@ function performSearch() {
             "searchResults"
         );
 
+    const button =
+        document.getElementById(
+            "searchButton"
+        );
+
+
+    if (
+        !input ||
+        !results ||
+        !button
+    )
+        return;
+
 
     const query =
         input.value.trim();
@@ -1118,22 +1732,32 @@ function performSearch() {
         return;
 
 
+    /*
+       HUMAN SUSPICION
+    */
+
     const lower =
         query.toLowerCase();
 
 
     if (
         lower.includes("human") ||
-        lower.includes("person")
+        lower.includes("person") ||
+        lower.includes("people")
     ) {
 
-        increaseSuspicion(10);
+        increaseSuspicion(15);
 
     }
 
 
+    /*
+       SHOES ARE SUSPICIOUS
+    */
+
     if (
-        lower.includes("shoe")
+        lower.includes("shoe") ||
+        lower.includes("shoes")
     ) {
 
         increaseSuspicion(5);
@@ -1141,61 +1765,400 @@ function performSearch() {
     }
 
 
+    button.disabled = true;
+
+
     results.innerHTML = `
 
-        <div class="result">
+        <div class="search-status">
 
-            <div
-                class="result-title"
-                onclick="showCatAI()">
+            🐈 Cat Search is searching...
 
-                Cat.AI
+            <br><br>
 
-            </div>
-
-            <p>
-                The suspicious AI cat living
-                inside the Cat Internet.
-            </p>
-
-        </div>
-
-
-        <div class="result">
-
-            <div
-                class="result-title"
-                onclick="showCats()">
-
-                Cat Pictures
-
-            </div>
-
-            <p>
-                Thousands of cats.
-                Probably.
-            </p>
-
-        </div>
-
-
-        <div class="result">
-
-            <div
-                class="result-title"
-                onclick="showNews()">
-
-                Cat News
-
-            </div>
-
-            <p>
-                Breaking news from the feline world.
-            </p>
+            Asking the cats...
 
         </div>
 
     `;
+
+
+    /*
+       THIS IS THE IMPORTANT PART:
+
+       The search itself talks to Cat.AI.
+
+       It uses the SAME /api/chat endpoint
+       that the normal Cat.AI chat uses.
+    */
+
+    const searchPrompt = `
+
+You are powering the fake search engine
+inside Cat Internet Simulator.
+
+The user searched for:
+
+"${query}"
+
+Generate fake search-engine results for
+this exact search.
+
+IMPORTANT:
+
+- This is a fictional cat internet.
+- Do NOT give ordinary Google-style real-world results.
+- Make the results feel like websites that
+  exist inside the Cat Internet Simulator.
+- Results can be silly, strange, suspicious,
+  useful, or cat-related depending on the search.
+- If the search involves shoes, cats should
+  be suspicious of them.
+- If the user searches for humans, cats should
+  become suspicious.
+- Do not pretend these fake websites are real.
+- Keep it reasonably concise.
+
+Return ONLY valid JSON.
+
+Use exactly this structure:
+
+{
+  "results": [
+    {
+      "title": "result title",
+      "url": "cat://example",
+      "description": "short result description"
+    }
+  ]
+}
+
+Return between 3 and 5 results.
+
+`;
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/chat",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            message:
+                                searchPrompt
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok
+        ) {
+
+            throw new Error(
+                data.error ||
+                "Cat Search server error."
+            );
+
+        }
+
+
+        let aiText =
+            data.reply;
+
+
+        /*
+           Remove markdown code fences
+           if the AI accidentally adds them.
+        */
+
+        aiText =
+            aiText
+                .replace(
+                    /^```json\s*/i,
+                    ""
+                )
+                .replace(
+                    /^```\s*/i,
+                    ""
+                )
+                .replace(
+                    /\s*```$/i,
+                    ""
+                )
+                .trim();
+
+
+        let searchData;
+
+
+        try {
+
+            searchData =
+                JSON.parse(
+                    aiText
+                );
+
+        }
+        catch {
+
+            /*
+               If the AI didn't return perfect JSON,
+               show its response rather than crashing.
+            */
+
+            results.innerHTML = `
+
+                <div class="search-status">
+
+                    🐈 Cat Search found something weird.
+
+                </div>
+
+
+                <div class="result">
+
+                    <div class="result-title">
+
+                        Cat Internet Result
+
+                    </div>
+
+                    <div class="result-url">
+
+                        cat://ai-result
+
+                    </div>
+
+                    <p>
+
+                        ${escapeHTML(aiText)}
+
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        if (
+            !searchData.results ||
+            !Array.isArray(
+                searchData.results
+            )
+        ) {
+
+            throw new Error(
+                "Cat Search received invalid results."
+            );
+
+        }
+
+
+        /*
+           BUILD THE RESULTS PAGE
+        */
+
+        results.innerHTML = `
+
+            <div class="search-status">
+
+                Search results for:
+
+                <b>
+                    ${escapeHTML(query)}
+                </b>
+
+                <br>
+
+                Cat Internet Search found
+                ${searchData.results.length}
+                results.
+
+            </div>
+
+        `;
+
+
+        for (
+            const result of
+            searchData.results
+        ) {
+
+            const resultElement =
+                document.createElement(
+                    "div"
+                );
+
+
+            resultElement.className =
+                "result";
+
+
+            const title =
+                escapeHTML(
+                    result.title ||
+                    "Untitled Cat Result"
+                );
+
+
+            const url =
+                escapeHTML(
+                    result.url ||
+                    "cat://unknown"
+                );
+
+
+            const description =
+                escapeHTML(
+                    result.description ||
+                    "No description."
+                );
+
+
+            resultElement.innerHTML = `
+
+                <div class="result-title">
+
+                    ${title}
+
+                </div>
+
+
+                <div class="result-url">
+
+                    ${url}
+
+                </div>
+
+
+                <p>
+
+                    ${description}
+
+                </p>
+
+            `;
+
+
+            results.appendChild(
+                resultElement
+            );
+
+        }
+
+
+    }
+    catch (error) {
+
+        results.innerHTML = `
+
+            <div class="search-status">
+
+                🐈 CAT SEARCH ERROR
+
+            </div>
+
+
+            <div class="result">
+
+                <div class="result-title">
+
+                    The cats broke the search engine.
+
+                </div>
+
+
+                <div class="result-url">
+
+                    cat://error
+
+                </div>
+
+
+                <p>
+
+                    ${escapeHTML(
+                        error.message
+                    )}
+
+                </p>
+
+            </div>
+
+        `;
+
+
+        console.error(
+            "Cat Search error:",
+            error
+        );
+
+    }
+
+
+    button.disabled = false;
+
+    input.focus();
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHTML(text) {
+
+    return String(text)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
@@ -1206,13 +2169,18 @@ function performSearch() {
 
 function showCats() {
 
-    navigate("cat://cats");
+    navigate(
+        "cat://cats"
+    );
+
 
     content.innerHTML = `
 
         <div class="header">
 
-            <h1>🐱 CAT PICTURES</h1>
+            <h1>
+                🐱 CAT PICTURES
+            </h1>
 
             Very serious Internet research.
 
@@ -1221,55 +2189,84 @@ function showCats() {
 
         <div class="body">
 
+
             <div class="cards">
 
+
                 <div class="card">
 
-                    <div class="cat">🐈</div>
+                    <div class="cat">
+                        🐈
+                    </div>
 
-                    <h2>Cat</h2>
+                    <h2>
+                        Cat
+                    </h2>
 
-                    <p>Cat.</p>
+                    <p>
+                        Cat.
+                    </p>
 
                 </div>
 
 
                 <div class="card">
 
-                    <div class="cat">🐈‍⬛</div>
+                    <div class="cat">
+                        🐈‍⬛
+                    </div>
 
-                    <h2>Black Cat</h2>
+                    <h2>
+                        Black Cat
+                    </h2>
 
-                    <p>Also cat.</p>
-
-                </div>
-
-
-                <div class="card">
-
-                    <div class="cat">😺</div>
-
-                    <h2>Happy Cat</h2>
-
-                    <p>Extremely happy.</p>
+                    <p>
+                        Also cat.
+                    </p>
 
                 </div>
 
 
                 <div class="card">
 
-                    <div class="cat">😼</div>
+                    <div class="cat">
+                        😺
+                    </div>
 
-                    <h2>Suspicious Cat</h2>
+                    <h2>
+                        Happy Cat
+                    </h2>
 
-                    <p>It knows something.</p>
+                    <p>
+                        Extremely happy.
+                    </p>
 
                 </div>
+
+
+                <div class="card">
+
+                    <div class="cat">
+                        😼
+                    </div>
+
+                    <h2>
+                        Suspicious Cat
+                    </h2>
+
+                    <p>
+                        It knows something.
+                    </p>
+
+                </div>
+
 
             </div>
 
         </div>
+
     `;
+
 }
 
 
@@ -1279,13 +2276,18 @@ function showCats() {
 
 function showNews() {
 
-    navigate("cat://news");
+    navigate(
+        "cat://news"
+    );
+
 
     content.innerHTML = `
 
         <div class="header">
 
-            <h1>📰 CAT NEWS NETWORK</h1>
+            <h1>
+                📰 CAT NEWS NETWORK
+            </h1>
 
             News from around the Cat Internet.
 
@@ -1294,15 +2296,20 @@ function showNews() {
 
         <div class="body">
 
+
             <div class="card">
 
                 <h2>
-                    BREAKING: Cat discovers box
+                    BREAKING:
+                    Cat discovers box
                 </h2>
 
                 <p>
-                    A cat has discovered a cardboard
-                    box. Scientists are confused.
+
+                    A cat has discovered
+                    a cardboard box.
+                    Scientists are confused.
+
                 </p>
 
             </div>
@@ -1318,14 +2325,19 @@ function showNews() {
                 </h2>
 
                 <p>
+
                     Cat.AI has once again confirmed
                     that shoes are suspicious.
+
                 </p>
 
             </div>
 
+
         </div>
+
     `;
+
 }
 
 
@@ -1335,49 +2347,71 @@ function showNews() {
 
 function showAbout() {
 
-    navigate("cat://about");
+    navigate(
+        "cat://about"
+    );
+
 
     content.innerHTML = `
 
         <div class="header">
 
-            <h1>ℹ️ ABOUT</h1>
+            <h1>
+                ℹ️ ABOUT
+            </h1>
 
         </div>
 
 
         <div class="body">
 
+
             <div class="notice">
 
-                <b>Cat Internet Simulator</b>
+                <b>
+                    Cat Internet Simulator
+                </b>
 
                 <br><br>
 
-                A fictional fake Internet full of cats.
+                A fictional fake Internet
+                full of cats.
 
             </div>
 
 
             <div class="card">
 
-                <h2>Website History</h2>
+                <h2>
+                    Website History
+                </h2>
+
 
                 <p>
+
                     Cat.AI was the original website.
+
                 </p>
 
+
                 <p>
+
                     Cat Internet Simulator came second
                     and was based on the original Cat.AI.
+
                 </p>
+
 
                 <p>
-                    The original Cat.AI now lives inside
-                    the Cat Internet Simulator.
+
+                    The original Cat.AI now lives
+                    inside the Cat Internet Simulator.
+
                 </p>
 
-                <button onclick="openOriginalCatAI()">
+
+                <button
+                    onclick="openOriginalCatAI()">
 
                     Visit Original Cat.AI
 
@@ -1385,8 +2419,11 @@ function showAbout() {
 
             </div>
 
+
         </div>
+
     `;
+
 }
 
 
@@ -1398,20 +2435,31 @@ function increaseSuspicion(amount) {
 
     suspicion += amount;
 
-    if (suspicion > 100)
+
+    if (
+        suspicion > 100
+    ) {
+
         suspicion = 100;
+
+    }
 
 
     suspicionFill.style.width =
         suspicion + "%";
 
+
     suspicionText.textContent =
         suspicion + "%";
 
 
-    if (suspicion >= 100) {
+    if (
+        suspicion >= 100
+    ) {
 
-        gameOver.classList.add("show");
+        gameOver.classList.add(
+            "show"
+        );
 
     }
 
@@ -1426,11 +2474,19 @@ function restartGame() {
 
     suspicion = 0;
 
-    suspicionFill.style.width = "0%";
 
-    suspicionText.textContent = "0%";
+    suspicionFill.style.width =
+        "0%";
 
-    gameOver.classList.remove("show");
+
+    suspicionText.textContent =
+        "0%";
+
+
+    gameOver.classList.remove(
+        "show"
+    );
+
 
     goHome();
 
@@ -1438,36 +2494,60 @@ function restartGame() {
 
 
 /* =====================================================
-   URL
+   URL RENDERING
 ===================================================== */
 
 function renderURL(url) {
 
-    if (url === "cat://home") {
+    if (
+        url === "cat://home"
+    ) {
 
         renderHome();
 
-    } else if (url === "cat://cat.ai") {
+    }
+
+    else if (
+        url === "cat://cat.ai"
+    ) {
 
         showCatAI();
 
-    } else if (url === "cat://search") {
+    }
+
+    else if (
+        url === "cat://search"
+    ) {
 
         showSearch();
 
-    } else if (url === "cat://cats") {
+    }
+
+    else if (
+        url === "cat://cats"
+    ) {
 
         showCats();
 
-    } else if (url === "cat://news") {
+    }
+
+    else if (
+        url === "cat://news"
+    ) {
 
         showNews();
 
-    } else if (url === "cat://about") {
+    }
+
+    else if (
+        url === "cat://about"
+    ) {
 
         showAbout();
 
-    } else {
+    }
+
+    else {
 
         renderHome();
 
@@ -1483,6 +2563,7 @@ function renderURL(url) {
 renderHome();
 
 </script>
+
 
 </body>
 </html>

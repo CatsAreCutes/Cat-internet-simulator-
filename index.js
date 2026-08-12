@@ -5,7 +5,8 @@ const path = require("path");
 const PORT = process.env.PORT || 3000;
 const HOST = "0.0.0.0";
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const OPENROUTER_API_KEY =
+    process.env.OPENROUTER_API_KEY;
 
 
 /* =========================================================
@@ -86,12 +87,25 @@ const CAT_SYSTEM_PROMPT = [
    ========================================================= */
 
 const MIME_TYPES = {
-    ".html": "text/html; charset=utf-8",
-    ".js": "application/javascript; charset=utf-8",
-    ".css": "text/css; charset=utf-8",
-    ".json": "application/json; charset=utf-8",
-    ".txt": "text/plain; charset=utf-8",
-    ".md": "text/markdown; charset=utf-8"
+
+    ".html":
+        "text/html; charset=utf-8",
+
+    ".js":
+        "application/javascript; charset=utf-8",
+
+    ".css":
+        "text/css; charset=utf-8",
+
+    ".json":
+        "application/json; charset=utf-8",
+
+    ".txt":
+        "text/plain; charset=utf-8",
+
+    ".md":
+        "text/markdown; charset=utf-8"
+
 };
 
 
@@ -100,12 +114,14 @@ const MIME_TYPES = {
    ========================================================= */
 
 const ALLOWED_UPLOADS = [
+
     ".js",
     ".html",
     ".css",
     ".json",
     ".txt",
     ".md"
+
 ];
 
 
@@ -113,16 +129,30 @@ const ALLOWED_UPLOADS = [
    SEND JSON
    ========================================================= */
 
-function sendJSON(response, statusCode, data) {
+function sendJSON(
+    response,
+    statusCode,
+    data
+) {
 
-    const body = JSON.stringify(data);
+    const body =
+        JSON.stringify(data);
 
-    response.writeHead(statusCode, {
-        "Content-Type": "application/json; charset=utf-8",
-        "Content-Length": Buffer.byteLength(body)
-    });
+
+    response.writeHead(
+        statusCode,
+        {
+            "Content-Type":
+                "application/json; charset=utf-8",
+
+            "Content-Length":
+                Buffer.byteLength(body)
+        }
+    );
+
 
     response.end(body);
+
 }
 
 
@@ -132,87 +162,128 @@ function sendJSON(response, statusCode, data) {
 
 function readBody(request) {
 
-    return new Promise((resolve, reject) => {
+    return new Promise(
+        (resolve, reject) => {
 
-        let body = "";
+            let body = "";
 
-        request.on("data", chunk => {
 
-            body += chunk.toString();
+            request.on(
+                "data",
+                chunk => {
 
-            if (body.length > 1000000) {
+                    body +=
+                        chunk.toString();
 
-                reject(
-                    new Error("Request body is too large.")
-                );
 
-                request.destroy();
-            }
-        });
+                    if (
+                        body.length >
+                        1000000
+                    ) {
 
-        request.on("end", () => {
-            resolve(body);
-        });
+                        reject(
+                            new Error(
+                                "Request body is too large."
+                            )
+                        );
 
-        request.on("error", reject);
+                        request.destroy();
 
-    });
+                    }
+
+                }
+            );
+
+
+            request.on(
+                "end",
+                () => {
+
+                    resolve(body);
+
+                }
+            );
+
+
+            request.on(
+                "error",
+                reject
+            );
+
+        }
+    );
+
 }
 
 
 /* =========================================================
-   ASK GEMINI / CAT.AI
+   ASK OPENROUTER / CAT.AI
    ========================================================= */
 
 async function askCatAI(message) {
 
-    if (!GEMINI_API_KEY) {
+    if (!OPENROUTER_API_KEY) {
 
         throw new Error(
-            "GEMINI_API_KEY is not configured on the server."
+            "OPENROUTER_API_KEY is not configured on the server."
         );
+
     }
 
 
-    const geminiResponse = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" +
-        encodeURIComponent(GEMINI_API_KEY),
-        {
-            method: "POST",
+    const openRouterResponse =
+        await fetch(
+            "https://openrouter.ai/api/v1/chat/completions",
+            {
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+                method: "POST",
 
-            body: JSON.stringify({
+                headers: {
 
-                systemInstruction: {
-                    parts: [
-                        {
-                            text: CAT_SYSTEM_PROMPT
-                        }
-                    ]
+                    "Content-Type":
+                        "application/json",
+
+                    "Authorization":
+                        "Bearer " +
+                        OPENROUTER_API_KEY,
+
+                    "X-Title":
+                        "Cat Internet Simulator"
+
                 },
 
-                contents: [
-                    {
-                        role: "user",
+                body:
+                    JSON.stringify({
 
-                        parts: [
+                        model:
+                            "nvidia/nemotron-3.5-lightning:free",
+
+                        messages: [
+
                             {
-                                text: message
-                            }
-                        ]
-                    }
-                ]
+                                role: "system",
 
-            })
-        }
-    );
+                                content:
+                                    CAT_SYSTEM_PROMPT
+                            },
+
+                            {
+                                role: "user",
+
+                                content:
+                                    message
+                            }
+
+                        ]
+
+                    })
+
+            }
+        );
 
 
     const rawText =
-        await geminiResponse.text();
+        await openRouterResponse.text();
 
 
     let data;
@@ -226,46 +297,53 @@ async function askCatAI(message) {
     } catch (error) {
 
         console.error(
-            "Gemini returned invalid JSON:",
+            "OpenRouter returned invalid JSON:",
             rawText
         );
 
+
         throw new Error(
-            "Gemini returned an invalid response."
+            "OpenRouter returned an invalid response."
         );
+
     }
 
 
-    if (!geminiResponse.ok) {
+    if (
+        !openRouterResponse.ok
+    ) {
 
         console.error(
-            "Gemini API error:",
+            "OpenRouter API error:",
             data
         );
 
+
         throw new Error(
-            data.error?.message ||
-            "Gemini API request failed."
+            data?.error?.message ||
+            "OpenRouter API request failed."
         );
+
     }
 
 
     const reply =
         data
-            ?.candidates?.[0]
-            ?.content?.parts?.[0]
-            ?.text;
+            ?.choices?.[0]
+            ?.message?.content;
 
 
     if (!reply) {
 
         throw new Error(
-            "Gemini returned no AI response."
+            "OpenRouter returned no AI response."
         );
+
     }
 
 
     return reply;
+
 }
 
 
@@ -273,7 +351,10 @@ async function askCatAI(message) {
    SERVE FILE
    ========================================================= */
 
-function serveFile(filePath, response) {
+function serveFile(
+    filePath,
+    response
+) {
 
     fs.readFile(
         filePath,
@@ -291,11 +372,14 @@ function serveFile(filePath, response) {
                 );
 
                 return;
+
             }
 
 
             const extension =
-                path.extname(filePath);
+                path.extname(
+                    filePath
+                );
 
 
             const contentType =
@@ -313,8 +397,10 @@ function serveFile(filePath, response) {
 
 
             response.end(data);
+
         }
     );
+
 }
 
 
@@ -322,374 +408,442 @@ function serveFile(filePath, response) {
    SERVER
    ========================================================= */
 
-const server = http.createServer(
-    async (request, response) => {
+const server =
+    http.createServer(
+        async (
+            request,
+            response
+        ) => {
 
-        const url = new URL(
-            request.url,
-            "http://localhost"
-        );
-
-
-        console.log(
-            request.method,
-            url.pathname
-        );
-
-
-        /* =================================================
-           HOME PAGE
-           ================================================= */
-
-        if (
-            request.method === "GET" &&
-            url.pathname === "/"
-        ) {
-
-            serveFile(
-                path.join(
-                    __dirname,
-                    "index.html"
-                ),
-                response
-            );
-
-            return;
-        }
-
-
-        /* =================================================
-           CAT API
-           ================================================= */
-
-        if (
-            request.method === "GET" &&
-            url.pathname === "/api/cat"
-        ) {
-
-            sendJSON(
-                response,
-                200,
-                {
-                    cat: "MEOW!",
-                    catsOnline: 47,
-                    suspicion:
-                        "THE CATS KNOW",
-                    website:
-                        "Cat Internet Simulator",
-                    basedOn:
-                        "Cat.AI"
-                }
-            );
-
-            return;
-        }
-
-
-        /* =================================================
-           CAT.AI CHAT API
-           ================================================= */
-
-        if (
-            request.method === "POST" &&
-            url.pathname === "/api/chat"
-        ) {
-
-            try {
-
-                const body =
-                    await readBody(request);
-
-
-                let input;
-
-
-                try {
-
-                    input =
-                        JSON.parse(body);
-
-                } catch (error) {
-
-                    sendJSON(
-                        response,
-                        400,
-                        {
-                            error:
-                                "Invalid JSON request."
-                        }
-                    );
-
-                    return;
-                }
-
-
-                const message =
-                    input?.message;
-
-
-                if (
-                    typeof message !== "string" ||
-                    message.trim() === ""
-                ) {
-
-                    sendJSON(
-                        response,
-                        400,
-                        {
-                            error:
-                                "Please provide a message."
-                        }
-                    );
-
-                    return;
-                }
-
-
-                console.log(
-                    "🐾 Cat.AI received:",
-                    message
+            const url =
+                new URL(
+                    request.url,
+                    "http://localhost"
                 );
 
 
-                const reply =
-                    await askCatAI(message);
+            console.log(
+                request.method,
+                url.pathname
+            );
 
 
-                console.log(
-                    "🐈 Cat.AI replied:",
-                    reply
+            /* =================================================
+               HOME PAGE
+               ================================================= */
+
+            if (
+                request.method === "GET" &&
+                url.pathname === "/"
+            ) {
+
+                serveFile(
+                    path.join(
+                        __dirname,
+                        "index.html"
+                    ),
+                    response
                 );
 
+                return;
+
+            }
+
+
+            /* =================================================
+               CAT API
+               ================================================= */
+
+            if (
+                request.method === "GET" &&
+                url.pathname === "/api/cat"
+            ) {
 
                 sendJSON(
                     response,
                     200,
                     {
-                        reply: reply
+
+                        cat:
+                            "MEOW!",
+
+                        catsOnline:
+                            47,
+
+                        suspicion:
+                            "THE CATS KNOW",
+
+                        website:
+                            "Cat Internet Simulator",
+
+                        basedOn:
+                            "Cat.AI"
+
                     }
                 );
 
+                return;
 
-            } catch (error) {
-
-                console.error(
-                    "🐈 Cat.AI error:",
-                    error
-                );
-
-
-                sendJSON(
-                    response,
-                    500,
-                    {
-                        error:
-                            error.message ||
-                            "Cat.AI encountered an error."
-                    }
-                );
             }
 
 
-            return;
-        }
+            /* =================================================
+               CAT.AI CHAT API
+               ================================================= */
 
-
-        /* =================================================
-           FILE UPLOAD / FILE READER
-           ================================================= */
-
-        if (
-            request.method === "POST" &&
-            url.pathname === "/api/upload"
-        ) {
-
-            try {
-
-                const body =
-                    await readBody(request);
-
-
-                let input;
-
+            if (
+                request.method === "POST" &&
+                url.pathname === "/api/chat"
+            ) {
 
                 try {
 
-                    input =
-                        JSON.parse(body);
+                    const body =
+                        await readBody(
+                            request
+                        );
+
+
+                    let input;
+
+
+                    try {
+
+                        input =
+                            JSON.parse(
+                                body
+                            );
+
+                    } catch (error) {
+
+                        sendJSON(
+                            response,
+                            400,
+                            {
+                                error:
+                                    "Invalid JSON request."
+                            }
+                        );
+
+                        return;
+
+                    }
+
+
+                    const message =
+                        input?.message;
+
+
+                    if (
+                        typeof message !==
+                            "string" ||
+                        message.trim() === ""
+                    ) {
+
+                        sendJSON(
+                            response,
+                            400,
+                            {
+                                error:
+                                    "Please provide a message."
+                            }
+                        );
+
+                        return;
+
+                    }
+
+
+                    console.log(
+                        "🐾 Cat.AI received:",
+                        message
+                    );
+
+
+                    const reply =
+                        await askCatAI(
+                            message
+                        );
+
+
+                    console.log(
+                        "🐈 Cat.AI replied:",
+                        reply
+                    );
+
+
+                    sendJSON(
+                        response,
+                        200,
+                        {
+                            reply:
+                                reply
+                        }
+                    );
+
 
                 } catch (error) {
 
-                    sendJSON(
-                        response,
-                        400,
-                        {
-                            error:
-                                "Invalid JSON upload."
-                        }
+                    console.error(
+                        "🐈 Cat.AI error:",
+                        error
                     );
 
-                    return;
-                }
-
-
-                const filename =
-                    input?.filename;
-
-
-                const content =
-                    input?.content;
-
-
-                if (
-                    typeof filename !== "string" ||
-                    typeof content !== "string"
-                ) {
 
                     sendJSON(
                         response,
-                        400,
+                        500,
                         {
                             error:
-                                "A filename and file contents are required."
+                                error.message ||
+                                "Cat.AI encountered an error."
                         }
                     );
 
-                    return;
                 }
 
 
-                const extension =
-                    path.extname(
+                return;
+
+            }
+
+
+            /* =================================================
+               FILE UPLOAD / FILE READER
+               ================================================= */
+
+            if (
+                request.method === "POST" &&
+                url.pathname === "/api/upload"
+            ) {
+
+                try {
+
+                    const body =
+                        await readBody(
+                            request
+                        );
+
+
+                    let input;
+
+
+                    try {
+
+                        input =
+                            JSON.parse(
+                                body
+                            );
+
+                    } catch (error) {
+
+                        sendJSON(
+                            response,
+                            400,
+                            {
+                                error:
+                                    "Invalid JSON upload."
+                            }
+                        );
+
+                        return;
+
+                    }
+
+
+                    const filename =
+                        input?.filename;
+
+
+                    const content =
+                        input?.content;
+
+
+                    if (
+                        typeof filename !==
+                            "string" ||
+                        typeof content !==
+                            "string"
+                    ) {
+
+                        sendJSON(
+                            response,
+                            400,
+                            {
+                                error:
+                                    "A filename and file contents are required."
+                            }
+                        );
+
+                        return;
+
+                    }
+
+
+                    const extension =
+                        path.extname(
+                            filename
+                        ).toLowerCase();
+
+
+                    if (
+                        !ALLOWED_UPLOADS.includes(
+                            extension
+                        )
+                    ) {
+
+                        sendJSON(
+                            response,
+                            400,
+                            {
+                                error:
+                                    "That file type is not allowed. Cat.AI can read .js, .html, .css, .json, .txt, and .md files."
+                            }
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (
+                        content.length >
+                        200000
+                    ) {
+
+                        sendJSON(
+                            response,
+                            400,
+                            {
+                                error:
+                                    "That file is too large for Cat.AI to inspect."
+                            }
+                        );
+
+                        return;
+
+                    }
+
+
+                    console.log(
+                        "🐾 Cat.AI received file:",
                         filename
-                    ).toLowerCase();
+                    );
 
 
-                if (
-                    !ALLOWED_UPLOADS.includes(
-                        extension
-                    )
-                ) {
+                    const prompt =
+
+                        "The user uploaded a file called " +
+                        filename +
+                        ". Read it as source code or text only. " +
+                        "Do NOT execute it. " +
+                        "Analyze it and explain what it does if appropriate." +
+                        "\n\nFILE CONTENTS:\n\n" +
+                        content;
+
+
+                    const reply =
+                        await askCatAI(
+                            prompt
+                        );
+
+
+                    console.log(
+                        "🐈 Cat.AI analyzed:",
+                        filename
+                    );
+
 
                     sendJSON(
                         response,
-                        400,
+                        200,
                         {
-                            error:
-                                "That file type is not allowed. Cat.AI can read .js, .html, .css, .json, .txt, and .md files."
+
+                            filename:
+                                filename,
+
+                            reply:
+                                reply
+
                         }
                     );
 
-                    return;
-                }
 
+                } catch (error) {
 
-                if (content.length > 200000) {
+                    console.error(
+                        "🐈 Cat.AI upload error:",
+                        error
+                    );
+
 
                     sendJSON(
                         response,
-                        400,
+                        500,
                         {
                             error:
-                                "That file is too large for Cat.AI to inspect."
+                                error.message ||
+                                "Cat.AI couldn't read that file."
                         }
                     );
 
-                    return;
                 }
 
 
-                console.log(
-                    "🐾 Cat.AI received file:",
-                    filename
-                );
+                return;
 
-
-                const prompt =
-                    "The user uploaded a file called " +
-                    filename +
-                    ". Read it as source code or text only. " +
-                    "Do NOT execute it. " +
-                    "Analyze it and explain what it does if appropriate." +
-                    "\n\nFILE CONTENTS:\n\n" +
-                    content;
-
-
-                const reply =
-                    await askCatAI(prompt);
-
-
-                console.log(
-                    "🐈 Cat.AI analyzed:",
-                    filename
-                );
-
-
-                sendJSON(
-                    response,
-                    200,
-                    {
-                        filename:
-                            filename,
-
-                        reply:
-                            reply
-                    }
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    "🐈 Cat.AI upload error:",
-                    error
-                );
-
-
-                sendJSON(
-                    response,
-                    500,
-                    {
-                        error:
-                            error.message ||
-                            "Cat.AI couldn't read that file."
-                    }
-                );
             }
 
 
-            return;
+            /* =================================================
+               404
+               ================================================= */
+
+            response.writeHead(
+                404,
+                {
+                    "Content-Type":
+                        "text/html; charset=utf-8"
+                }
+            );
+
+
+            response.end(
+
+                "<!DOCTYPE html>" +
+
+                "<html>" +
+
+                "<head>" +
+
+                "<title>" +
+                "404 - Cat Not Found" +
+                "</title>" +
+
+                "</head>" +
+
+                "<body>" +
+
+                "<h1>" +
+                "🐈 404 - Cat Not Found" +
+                "</h1>" +
+
+                "<p>" +
+                "The cat couldn't find that page." +
+                "</p>" +
+
+                '<a href="/">' +
+                "Go back home" +
+                "</a>" +
+
+                "</body>" +
+
+                "</html>"
+
+            );
+
         }
-
-
-        /* =================================================
-           404
-           ================================================= */
-
-        response.writeHead(
-            404,
-            {
-                "Content-Type":
-                    "text/html; charset=utf-8"
-            }
-        );
-
-
-        response.end(
-            "<!DOCTYPE html>" +
-            "<html>" +
-            "<head>" +
-            "<title>404 - Cat Not Found</title>" +
-            "</head>" +
-            "<body>" +
-            "<h1>🐈 404 - Cat Not Found</h1>" +
-            "<p>The cat couldn't find that page.</p>" +
-            '<a href="/">Go back home</a>' +
-            "</body>" +
-            "</html>"
-        );
-    }
-);
+    );
 
 
 /* =========================================================
@@ -731,17 +885,20 @@ server.listen(
         );
 
 
-        if (!GEMINI_API_KEY) {
+        if (
+            !OPENROUTER_API_KEY
+        ) {
 
             console.log(
-                "⚠️ WARNING: GEMINI_API_KEY is missing!"
+                "⚠️ WARNING: OPENROUTER_API_KEY is missing!"
             );
 
         } else {
 
             console.log(
-                "🔑 Gemini API key detected."
+                "🔑 OpenRouter API key detected."
             );
+
         }
 
     }

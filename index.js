@@ -1,4 +1,3 @@
-
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
@@ -6,7 +5,7 @@ const path = require("path");
 const PORT = process.env.PORT || 3000;
 const HOST = "0.0.0.0";
 
-const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 
 /* =========================================================
@@ -78,6 +77,7 @@ const CAT_SYSTEM_PROMPT = [
     "You may explain what the uploaded code appears to do.",
     "You may point out bugs, errors, interesting parts, or suspicious code.",
     "If the user uploads your own source code, you can jokingly react to seeing your own brain."
+
 ].join("\n");
 
 
@@ -161,43 +161,48 @@ function readBody(request) {
 
 
 /* =========================================================
-   ASK GROQ / CAT.AI
+   ASK GEMINI / CAT.AI
    ========================================================= */
 
 async function askCatAI(message) {
 
-    if (!GROQ_API_KEY) {
+    if (!GEMINI_API_KEY) {
 
         throw new Error(
-            "GROQ_API_KEY is not configured on the server."
+            "GEMINI_API_KEY is not configured on the server."
         );
     }
 
 
-    const groqResponse = await fetch(
-        "https://api.groq.com/openai/v1/chat/completions",
+    const geminiResponse = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" +
+        encodeURIComponent(GEMINI_API_KEY),
         {
             method: "POST",
 
             headers: {
-                "Content-Type": "application/json",
-                "Authorization":
-                    "Bearer " + GROQ_API_KEY
+                "Content-Type": "application/json"
             },
 
             body: JSON.stringify({
 
-                model: "llama-3.3-70b-versatile",
+                systemInstruction: {
+                    parts: [
+                        {
+                            text: CAT_SYSTEM_PROMPT
+                        }
+                    ]
+                },
 
-                messages: [
-                    {
-                        role: "system",
-                        content: CAT_SYSTEM_PROMPT
-                    },
-
+                contents: [
                     {
                         role: "user",
-                        content: message
+
+                        parts: [
+                            {
+                                text: message
+                            }
+                        ]
                     }
                 ]
 
@@ -207,7 +212,7 @@ async function askCatAI(message) {
 
 
     const rawText =
-        await groqResponse.text();
+        await geminiResponse.text();
 
 
     let data;
@@ -215,43 +220,47 @@ async function askCatAI(message) {
 
     try {
 
-        data = JSON.parse(rawText);
+        data =
+            JSON.parse(rawText);
 
     } catch (error) {
 
         console.error(
-            "Groq returned invalid JSON:",
+            "Gemini returned invalid JSON:",
             rawText
         );
 
         throw new Error(
-            "Groq returned an invalid response."
+            "Gemini returned an invalid response."
         );
     }
 
 
-    if (!groqResponse.ok) {
+    if (!geminiResponse.ok) {
 
         console.error(
-            "Groq API error:",
+            "Gemini API error:",
             data
         );
 
         throw new Error(
             data.error?.message ||
-            "Groq API request failed."
+            "Gemini API request failed."
         );
     }
 
 
     const reply =
-        data?.choices?.[0]?.message?.content;
+        data
+            ?.candidates?.[0]
+            ?.content?.parts?.[0]
+            ?.text;
 
 
     if (!reply) {
 
         throw new Error(
-            "Groq returned no AI response."
+            "Gemini returned no AI response."
         );
     }
 
@@ -438,7 +447,7 @@ const server = http.createServer(
 
 
                 console.log(
-                    "Cat.AI received:",
+                    "🐾 Cat.AI received:",
                     message
                 );
 
@@ -448,7 +457,7 @@ const server = http.createServer(
 
 
                 console.log(
-                    "Cat.AI replied:",
+                    "🐈 Cat.AI replied:",
                     reply
                 );
 
@@ -465,7 +474,7 @@ const server = http.createServer(
             } catch (error) {
 
                 console.error(
-                    "Cat.AI error:",
+                    "🐈 Cat.AI error:",
                     error
                 );
 
@@ -591,13 +600,12 @@ const server = http.createServer(
 
 
                 console.log(
-                    "Cat.AI received file:",
+                    "🐾 Cat.AI received file:",
                     filename
                 );
 
 
                 const prompt =
-
                     "The user uploaded a file called " +
                     filename +
                     ". Read it as source code or text only. " +
@@ -612,7 +620,7 @@ const server = http.createServer(
 
 
                 console.log(
-                    "Cat.AI analyzed:",
+                    "🐈 Cat.AI analyzed:",
                     filename
                 );
 
@@ -623,6 +631,7 @@ const server = http.createServer(
                     {
                         filename:
                             filename,
+
                         reply:
                             reply
                     }
@@ -632,7 +641,7 @@ const server = http.createServer(
             } catch (error) {
 
                 console.error(
-                    "Cat.AI upload error:",
+                    "🐈 Cat.AI upload error:",
                     error
                 );
 
@@ -679,7 +688,6 @@ const server = http.createServer(
             "</body>" +
             "</html>"
         );
-
     }
 );
 
@@ -723,16 +731,16 @@ server.listen(
         );
 
 
-        if (!GROQ_API_KEY) {
+        if (!GEMINI_API_KEY) {
 
             console.log(
-                "WARNING: GROQ_API_KEY is missing!"
+                "⚠️ WARNING: GEMINI_API_KEY is missing!"
             );
 
         } else {
 
             console.log(
-                "Groq API key detected."
+                "🔑 Gemini API key detected."
             );
         }
 

@@ -20,7 +20,7 @@ const CAT_SYSTEM_PROMPT = [
 
     "IMPORTANT LORE:",
 
-    "Cat.AI was the ORIGINAL website.",
+    "Cat.AI was the ORIGINAL website. This is the website: https://cat-ai-xuxu.onrender.com/",
 
     "The current website is called Cat Internet Simulator and is the SECOND website based on the original Cat.AI.",
 

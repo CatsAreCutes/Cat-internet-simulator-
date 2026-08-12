@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,350 +7,846 @@
 <title>Cat Internet Simulator</title>
 
 <style>
-    body {
-        margin: 0;
-        background: #008080;
-        color: #000000;
-        font-family: "MS Sans Serif", Tahoma, Arial, sans-serif;
-        font-size: 14px;
-    }
+* {
+    box-sizing: border-box;
+}
 
-    a {
-        color: #0000ee;
-    }
+html,
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
 
-    .window {
-        width: 90%;
-        max-width: 900px;
-        margin: 25px auto;
-        background: #c0c0c0;
-        border: 2px solid #ffffff;
-        border-right-color: #000000;
-        border-bottom-color: #000000;
-        box-shadow: 4px 4px 0 #000000;
-    }
+body {
+    font-family: "Courier New", monospace;
+    background: #008080;
+    color: #000;
+    overflow: hidden;
+}
 
-    .titlebar {
-        background: #000080;
-        color: white;
-        padding: 4px 6px;
-        font-weight: bold;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+/* =========================
+   DESKTOP
+========================= */
 
-    .title-buttons {
-        display: flex;
-        gap: 3px;
-    }
+.desktop {
+    width: 100vw;
+    height: 100vh;
+    padding: 8px;
+    background: #008080;
+}
 
-    .title-button {
-        background: #c0c0c0;
-        color: #000;
-        width: 18px;
-        height: 18px;
-        text-align: center;
-        line-height: 17px;
-        border: 1px solid #fff;
-        border-right-color: #000;
-        border-bottom-color: #000;
-        font-size: 12px;
-    }
+/* =========================
+   BROWSER
+========================= */
 
-    .content {
-        padding: 12px;
-    }
+.browser {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 
-    .panel {
-        background: #ffffff;
-        border: 2px solid #808080;
-        border-right-color: #ffffff;
-        border-bottom-color: #ffffff;
-        padding: 10px;
-        margin-bottom: 12px;
-    }
+    background: #c0c0c0;
 
-    .header {
-        text-align: center;
-        font-family: "Courier New", monospace;
-    }
+    border: 3px outset #ffffff;
 
-    .header h1 {
-        margin: 5px 0;
-        font-size: 28px;
-    }
+    box-shadow:
+        8px 8px 0 #004040;
+}
 
-    .cat {
-        font-size: 42px;
-    }
+/* =========================
+   TITLE BAR
+========================= */
 
-    .blink {
-        color: red;
-        font-weight: bold;
-    }
+.titlebar {
+    height: 34px;
+    flex-shrink: 0;
 
-    .search-row {
-        display: flex;
-        gap: 5px;
-        align-items: center;
-    }
+    display: flex;
+    align-items: center;
 
-    input[type="text"] {
-        flex: 1;
-        min-width: 0;
-        padding: 4px;
-        border: 2px inset #c0c0c0;
-        background: white;
-        color: black;
-        font-family: Arial, sans-serif;
-    }
+    padding: 3px 7px;
 
-    button {
-        background: #c0c0c0;
-        color: black;
-        border: 2px solid #ffffff;
-        border-right-color: #000000;
-        border-bottom-color: #000000;
-        padding: 4px 10px;
-        font-family: "MS Sans Serif", Tahoma, Arial, sans-serif;
-        cursor: pointer;
-    }
+    color: white;
 
-    button:active {
-        border: 2px solid #000000;
-        border-right-color: #ffffff;
-        border-bottom-color: #ffffff;
-    }
+    background:
+        linear-gradient(
+            to right,
+            #000080,
+            #1084d0
+        );
 
-    .results {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+.titlebar-cat {
+    margin-right: 8px;
+}
+
+.titlebar-buttons {
+    margin-left: auto;
+
+    display: flex;
+    gap: 3px;
+}
+
+.titlebar-buttons button {
+    width: 25px;
+    height: 22px;
+
+    padding: 0;
+
+    border: 2px outset #eee;
+
+    background: #c0c0c0;
+
+    font-weight: bold;
+}
+
+/* =========================
+   TOOLBAR
+========================= */
+
+.toolbar {
+    min-height: 43px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 5px;
+
+    border-bottom: 2px inset #eee;
+
+    background: #c0c0c0;
+}
+
+.toolbar button {
+    min-width: 55px;
+    height: 30px;
+
+    border: 2px outset white;
+
+    background: #c0c0c0;
+
+    cursor: pointer;
+}
+
+.toolbar button:active {
+    border-style: inset;
+}
+
+.address {
+    flex: 1;
+
+    height: 29px;
+
+    padding: 4px 7px;
+
+    border: 2px inset white;
+
+    background: white;
+}
+
+.go {
+    min-width: 45px !important;
+}
+
+/* =========================
+   MAIN PAGE
+========================= */
+
+.page {
+    flex: 1;
+
+    min-height: 0;
+
+    display: flex;
+
+    overflow: hidden;
+
+    background: white;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar {
+    width: 185px;
+
+    flex-shrink: 0;
+
+    padding: 8px;
+
+    border-right: 3px ridge white;
+
+    background: #d4d0c8;
+
+    overflow-y: auto;
+}
+
+.sidebar-title {
+    padding: 6px;
+
+    color: white;
+
+    background: #000080;
+
+    font-weight: bold;
+
+    text-align: center;
+}
+
+.side-button {
+    width: 100%;
+
+    margin-top: 7px;
+
+    padding: 8px 4px;
+
+    border: 2px outset white;
+
+    background: #c0c0c0;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+.side-button:active {
+    border-style: inset;
+}
+
+.cat-status {
+    margin-top: 12px;
+
+    padding: 8px;
+
+    border: 2px inset white;
+
+    background: white;
+
+    font-size: 12px;
+}
+
+.suspicion-box {
+    margin-top: 10px;
+
+    padding: 7px;
+
+    border: 2px inset white;
+
+    background: #ffffcc;
+
+    font-size: 12px;
+}
+
+.suspicion-bar {
+    height: 15px;
+
+    margin-top: 5px;
+
+    border: 2px inset white;
+
+    background: white;
+}
+
+.suspicion-fill {
+    width: 0%;
+
+    height: 100%;
+
+    background: red;
+
+    transition: width 0.3s;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.content {
+    flex: 1;
+
+    min-width: 0;
+    min-height: 0;
+
+    overflow: auto;
+
+    background: white;
+}
+
+.site-header {
+    padding: 12px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            90deg,
+            #000080,
+            #800080,
+            #000080
+        );
+
+    border-bottom: 4px ridge white;
+}
+
+.site-header h1 {
+    margin: 0;
+
+    font-family: Georgia, serif;
+
+    font-size: 28px;
+}
+
+.site-header p {
+    margin: 4px 0 0;
+}
+
+.site-body {
+    padding: 18px;
+}
+
+.notice {
+    padding: 10px;
+
+    margin-bottom: 15px;
+
+    border: 2px dashed #800080;
+
+    background: #ffffcc;
+}
+
+.web-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(210px, 1fr)
+        );
+
+    gap: 15px;
+}
+
+.web-card {
+    min-height: 160px;
+
+    padding: 13px;
+
+    border: 3px outset #eee;
+
+    background: #e8e8e8;
+}
+
+.web-card h2 {
+    margin-top: 0;
+
+    color: #000080;
+
+    font-size: 19px;
+}
+
+.web-card p {
+    font-size: 13px;
+}
+
+.web-card button {
+    padding: 7px;
+
+    border: 2px outset white;
+
+    background: #c0c0c0;
+
+    cursor: pointer;
+}
+
+.cat-picture {
+    font-size: 60px;
+
+    text-align: center;
+}
+
+.footer {
+    margin-top: 25px;
+
+    padding: 8px;
+
+    border-top: 2px solid #808080;
+
+    font-size: 11px;
+
+    text-align: center;
+}
+
+/* =========================
+   CHAT
+========================= */
+
+.chat-window {
+    height: 100%;
+
+    min-height: 400px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    background: #d4d0c8;
+}
+
+.chat-title {
+    padding: 8px;
+
+    color: white;
+
+    background: #800080;
+
+    font-weight: bold;
+}
+
+.chat-messages {
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 10px;
+
+    border: 3px inset white;
+
+    background: #111;
+
+    color: white;
+}
+
+.chat-message {
+    margin: 8px 0;
+
+    padding: 7px;
+
+    border: 1px solid #555;
+
+    white-space: pre-wrap;
+}
+
+.chat-message.user {
+    color: #ffff66;
+}
+
+.chat-message.cat {
+    color: #66ff99;
+}
+
+.chat-input {
+    display: flex;
+
+    gap: 5px;
+
+    padding: 7px;
+
+    border-top: 2px outset white;
+}
+
+.chat-input input {
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 7px;
+
+    border: 2px inset white;
+}
+
+.chat-input button {
+    padding: 7px 15px;
+
+    border: 2px outset white;
+
+    background: #c0c0c0;
+
+    cursor: pointer;
+}
+
+/* =========================
+   SEARCH
+========================= */
+
+.search-box {
+    padding: 15px;
+
+    background: #e8e8e8;
+
+    border-bottom: 2px solid #808080;
+}
+
+.search-box input {
+    width: 70%;
+
+    max-width: 600px;
+
+    padding: 7px;
+
+    border: 2px inset white;
+}
+
+.search-box button {
+    padding: 7px 12px;
+
+    border: 2px outset white;
+
+    background: #c0c0c0;
+
+    cursor: pointer;
+}
+
+.search-results {
+    padding: 15px;
+}
+
+.result {
+    margin-bottom: 17px;
+}
+
+.result a {
+    color: #0000ee;
+
+    text-decoration: underline;
+
+    font-size: 18px;
+
+    cursor: pointer;
+}
+
+.result p {
+    margin: 4px 0;
+
+    font-size: 13px;
+}
+
+/* =========================
+   GAME OVER
+========================= */
+
+.game-over {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: black;
+
+    color: red;
+
+    text-align: center;
+}
+
+.game-over.open {
+    display: flex;
+}
+
+.game-over-box {
+    width: min(650px, 90%);
+
+    padding: 35px;
+
+    border: 5px double red;
+
+    background: #080808;
+
+    box-shadow:
+        0 0 40px red;
+}
+
+.game-over-cat {
+    font-size: 80px;
+}
+
+.game-over h1 {
+    font-size: 42px;
+
+    margin: 10px;
+}
+
+.game-over p {
+    font-size: 18px;
+
+    color: white;
+}
+
+.restart {
+    margin-top: 20px;
+
+    padding: 10px 25px;
+
+    border: 3px outset white;
+
+    background: #c0c0c0;
+
+    color: black;
+
+    cursor: pointer;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px) {
+
+    .sidebar {
         display: none;
     }
 
-    .result-box {
-        border: 1px solid #000000;
-        background: #ffffcc;
-        padding: 10px;
-        margin-top: 8px;
+    .site-header h1 {
+        font-size: 22px;
     }
-
-    .result-title {
-        background: #000080;
-        color: white;
-        padding: 3px;
-        font-weight: bold;
-        margin-bottom: 8px;
-    }
-
-    .cat-opinion {
-        background: #eeeeee;
-        border: 1px dotted #555555;
-        padding: 8px;
-        margin-top: 10px;
-    }
-
-    .suspicion {
-        text-align: center;
-        font-family: "Courier New", monospace;
-        font-weight: bold;
-        margin-top: 10px;
-    }
-
-    .upload-box {
-        background: #eeeeee;
-        border: 2px inset #c0c0c0;
-        padding: 10px;
-    }
-
-    input[type="file"] {
-        background: white;
-        border: 2px inset #c0c0c0;
-        padding: 3px;
-        max-width: 100%;
-    }
-
-    #fileResult {
-        margin-top: 10px;
-    }
-
-    .file-response {
-        background: #ffffcc;
-        border: 1px solid #000000;
-        padding: 10px;
-    }
-
-    .status {
-        font-family: "Courier New", monospace;
-        background: #000000;
-        color: #00ff00;
-        padding: 8px;
-        border: 2px inset #808080;
-    }
-
-    .footer {
-        text-align: center;
-        font-size: 11px;
-        margin-top: 15px;
-    }
-
-    pre {
-        white-space: pre-wrap;
-        word-break: break-word;
-    }
-
-    @media (max-width: 600px) {
-        .window {
-            width: 96%;
-            margin: 10px auto;
-        }
-
-        .search-row {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .search-row button {
-            width: 100%;
-        }
-    }
+}
 </style>
 </head>
 
 <body>
 
-<div class="window">
+<div class="desktop">
 
-    <div class="titlebar">
-        <span>🐈 Cat Internet Simulator</span>
+<div class="browser">
 
-        <div class="title-buttons">
-            <div class="title-button">_</div>
-            <div class="title-button">□</div>
-            <div class="title-button">X</div>
-        </div>
+<!-- =========================
+     TITLE BAR
+========================= -->
+
+<div class="titlebar">
+
+    <span class="titlebar-cat">🐈</span>
+
+    Cat Internet Simulator -
+    Microsoft Cat Explorer
+
+    <div class="titlebar-buttons">
+
+        <button>_</button>
+        <button>□</button>
+        <button>×</button>
+
     </div>
 
-    <div class="content">
+</div>
 
-        <!-- HEADER -->
 
-        <div class="panel header">
+<!-- =========================
+     TOOLBAR
+========================= -->
 
-            <div class="cat">🐈</div>
+<div class="toolbar">
 
-            <h1>CAT INTERNET SIMULATOR</h1>
+    <button onclick="goBack()">
+        ◀ Back
+    </button>
 
-            <div>
-                <b>Welcome to the Cat Internet!</b>
+    <button onclick="goForward()">
+        ▶
+    </button>
+
+    <button onclick="home()">
+        🏠 Home
+    </button>
+
+    <button onclick="reloadPage()">
+        ⟳
+    </button>
+
+    <input
+        id="address"
+        class="address"
+        value="cat://home"
+        onkeydown="addressKey(event)"
+    >
+
+    <button
+        class="go"
+        onclick="goAddress()">
+        Go
+    </button>
+
+</div>
+
+
+<!-- =========================
+     PAGE
+========================= -->
+
+<div class="page">
+
+
+<!-- =========================
+     SIDEBAR
+========================= -->
+
+<aside class="sidebar">
+
+    <div class="sidebar-title">
+        CAT INTERNET
+    </div>
+
+
+    <button
+        class="side-button"
+        onclick="home()">
+        🏠 Cat Home
+    </button>
+
+
+    <button
+        class="side-button"
+        onclick="showSearch()">
+        🔎 Cat Search
+    </button>
+
+
+    <button
+        class="side-button"
+        onclick="showCatAI()">
+        🐈 Cat.AI
+    </button>
+
+
+    <!-- REAL OG REDIRECT -->
+
+    <button
+        class="side-button"
+        onclick="openOriginalCatAI()">
+        🐈 Original Cat.AI
+    </button>
+
+
+    <button
+        class="side-button"
+        onclick="showCats()">
+        🐱 Cat Pictures
+    </button>
+
+
+    <button
+        class="side-button"
+        onclick="showNews()">
+        📰 Cat News
+    </button>
+
+
+    <button
+        class="side-button"
+        onclick="showAbout()">
+        ℹ️ About
+    </button>
+
+
+    <div class="cat-status">
+
+        <strong>
+            CAT.AI STATUS
+        </strong>
+
+        <br><br>
+
+        ● ONLINE
+
+        <br>
+
+        ● WATCHING
+
+    </div>
+
+
+    <div class="suspicion-box">
+
+        <strong>
+            HUMAN SUSPICION
+        </strong>
+
+        <div class="suspicion-bar">
+
+            <div
+                id="suspicionFill"
+                class="suspicion-fill">
             </div>
-
-            <p>
-                <span class="blink">NEW!</span>
-                The second website based on Cat.AI
-            </p>
 
         </div>
 
-
-        <!-- SEARCH -->
-
-        <div class="panel">
-
-            <div class="result-title">
-                🐈 CAT.AI SEARCH
-            </div>
-
-            <p>
-                Ask Cat.AI something:
-            </p>
-
-            <div class="search-row">
-
-                <input
-                    type="text"
-                    id="message"
-                    placeholder="Type your search here..."
-                    autocomplete="off"
-                >
-
-                <button onclick="askCatAI()">
-                    SEARCH
-                </button>
-
-            </div>
-
-            <div id="chatResult"></div>
-
+        <div>
+            <span id="suspicionText">
+                0%
+            </span>
         </div>
 
+    </div>
 
-        <!-- FILE UPLOAD -->
+</aside>
 
-        <div class="panel">
 
-            <div class="result-title">
-                📂 CAT.AI FILE INVESTIGATOR
-            </div>
+<!-- =========================
+     CONTENT
+========================= -->
 
-            <div class="upload-box">
+<main
+    id="content"
+    class="content">
+</main>
 
-                <p>
-                    <b>Show Cat.AI one of your files!</b>
-                </p>
 
-                <p>
-                    Cat.AI can read source code and text.
-                    It does not execute uploaded files.
-                </p>
+</div>
+</div>
+</div>
 
-                <p>
-                    Allowed files:
-                    <b>.js .html .css .json .txt .md</b>
-                </p>
 
-                <input
-                    type="file"
-                    id="catFile"
-                    accept=".js,.html,.css,.json,.txt,.md"
-                >
+<!-- =========================
+     GAME OVER
+========================= -->
 
-                <br><br>
+<div
+    id="gameOver"
+    class="game-over">
 
-                <button onclick="uploadCatFile()">
-                    🧠 LET CAT.AI READ IT
-                </button>
+    <div class="game-over-box">
 
-                <div id="fileResult"></div>
-
-            </div>
-
+        <div class="game-over-cat">
+            🐈
         </div>
 
+        <h1>
+            GAME OVER
+        </h1>
 
-        <!-- CAT STATUS -->
+        <p>
+            Cat.AI has discovered the truth.
+        </p>
 
-        <div class="panel">
+        <p>
+            Maybe don't say you are a human lmao
+        </p>
 
-            <div class="result-title">
-                🐾 CAT INTERNET STATUS
-            </div>
+        <p>
+            Good, YOU DIED-
+        </p>
 
-            <div class="status" id="catStatus">
-                Connecting to the cats...
-            </div>
+        <p>
+            Meow.
+        </p>
 
-        </div>
-
-
-        <div class="footer">
-
-            Cat Internet Simulator<br>
-
-            <b>Cat.AI was here first.</b><br>
-
-            Best viewed with a suspicious cat nearby. 🐈
-
-        </div>
+        <button
+            class="restart"
+            onclick="restartSimulator()">
+            🔄 Restart
+        </button>
 
     </div>
 
@@ -360,37 +855,587 @@
 
 <script>
 
-/* =========================================================
-   CAT.AI CHAT
-   ========================================================= */
+/* =====================================================
+   STATE
+===================================================== */
 
-async function askCatAI() {
+let suspicion =
+    Number(
+        localStorage.getItem(
+            "catInternetSuspicion"
+        ) || 0
+    );
+
+let history =
+    ["cat://home"];
+
+let historyIndex = 0;
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const content =
+    document.getElementById("content");
+
+const address =
+    document.getElementById("address");
+
+const suspicionFill =
+    document.getElementById("suspicionFill");
+
+const suspicionText =
+    document.getElementById("suspicionText");
+
+const gameOver =
+    document.getElementById("gameOver");
+
+
+/* =====================================================
+   SUSPICION
+===================================================== */
+
+function updateSuspicion() {
+
+    suspicion =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                suspicion
+            )
+        );
+
+    suspicionFill.style.width =
+        suspicion + "%";
+
+    suspicionText.textContent =
+        suspicion + "%";
+
+    localStorage.setItem(
+        "catInternetSuspicion",
+        String(suspicion)
+    );
+
+    if(suspicion >= 100) {
+
+        triggerGameOver();
+
+    }
+
+}
+
+
+function increaseSuspicion(amount) {
+
+    suspicion += amount;
+
+    updateSuspicion();
+
+}
+
+
+function triggerGameOver() {
+
+    gameOver.classList.add("open");
+
+}
+
+
+function restartSimulator() {
+
+    suspicion = 0;
+
+    localStorage.setItem(
+        "catInternetSuspicion",
+        "0"
+    );
+
+    gameOver.classList.remove("open");
+
+    showCatAI();
+
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function setAddress(url) {
+
+    address.value = url;
+
+}
+
+
+function navigate(url) {
+
+    history =
+        history.slice(
+            0,
+            historyIndex + 1
+        );
+
+    history.push(url);
+
+    historyIndex =
+        history.length - 1;
+
+    setAddress(url);
+
+}
+
+
+function goBack() {
+
+    if(historyIndex <= 0)
+        return;
+
+    historyIndex--;
+
+    const url =
+        history[historyIndex];
+
+    setAddress(url);
+
+    renderURL(url);
+
+}
+
+
+function goForward() {
+
+    if(
+        historyIndex >=
+        history.length - 1
+    )
+        return;
+
+    historyIndex++;
+
+    const url =
+        history[historyIndex];
+
+    setAddress(url);
+
+    renderURL(url);
+
+}
+
+
+function reloadPage() {
+
+    renderURL(
+        address.value
+    );
+
+}
+
+
+function goAddress() {
+
+    const url =
+        address.value.trim();
+
+    if(!url)
+        return;
+
+    navigate(url);
+
+    renderURL(url);
+
+}
+
+
+function addressKey(event) {
+
+    if(event.key === "Enter") {
+
+        goAddress();
+
+    }
+
+}
+
+
+/* =====================================================
+   ORIGINAL CAT.AI
+===================================================== */
+
+function openOriginalCatAI() {
+
+    window.location.href =
+        "https://cat-ai-xuxu.onrender.com/";
+
+}
+
+
+/* =====================================================
+   HOME
+===================================================== */
+
+function home() {
+
+    navigate("cat://home");
+
+    renderHome();
+
+}
+
+
+function renderHome() {
+
+    setAddress("cat://home");
+
+    content.innerHTML = `
+
+        <div class="website">
+
+            <div class="site-header">
+
+                <h1>
+                    🐈 CAT INTERNET SIMULATOR
+                </h1>
+
+                <p>
+                    Welcome to the Internet.
+                    But cats.
+                </p>
+
+            </div>
+
+
+            <div class="site-body">
+
+                <div class="notice">
+
+                    ⚠️ IMPORTANT INTERNET NOTICE:
+
+                    <br><br>
+
+                    This website is approximately
+                    47% cats and 53% suspicious activity.
+
+                </div>
+
+
+                <div class="web-grid">
+
+
+                    <div class="web-card">
+
+                        <div class="cat-picture">
+                            🐈
+                        </div>
+
+                        <h2>
+                            Cat.AI
+                        </h2>
+
+                        <p>
+                            Talk to the AI cat
+                            living inside the
+                            Cat Internet.
+                        </p>
+
+                        <button
+                            onclick="showCatAI()">
+                            ENTER
+                        </button>
+
+                    </div>
+
+
+                    <div class="web-card">
+
+                        <div class="cat-picture">
+                            🔎
+                        </div>
+
+                        <h2>
+                            Cat Search
+                        </h2>
+
+                        <p>
+                            Search the fake
+                            Cat Internet.
+                        </p>
+
+                        <button
+                            onclick="showSearch()">
+                            SEARCH
+                        </button>
+
+                    </div>
+
+
+                    <div class="web-card">
+
+                        <div class="cat-picture">
+                            👟
+                        </div>
+
+                        <h2>
+                            Shoe Database
+                        </h2>
+
+                        <p>
+                            WARNING:
+                            Cat.AI does not
+                            approve of shoes.
+                        </p>
+
+                        <button
+                            onclick="shoeWarning()">
+                            VIEW
+                        </button>
+
+                    </div>
+
+
+                    <div class="web-card">
+
+                        <div class="cat-picture">
+                            📰
+                        </div>
+
+                        <h2>
+                            Cat News
+                        </h2>
+
+                        <p>
+                            Completely legitimate
+                            cat news.
+                        </p>
+
+                        <button
+                            onclick="showNews()">
+                            READ
+                        </button>
+
+                    </div>
+
+
+                    <div class="web-card">
+
+                        <div class="cat-picture">
+                            🐱
+                        </div>
+
+                        <h2>
+                            Cat Pictures
+                        </h2>
+
+                        <p>
+                            Extremely important
+                            research.
+                        </p>
+
+                        <button
+                            onclick="showCats()">
+                            VIEW CATS
+                        </button>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="footer">
+
+                    Cat Internet Simulator ©
+
+                    <br>
+
+                    Completely suspicious Internet
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   REAL CAT.AI CHAT
+===================================================== */
+
+function showCatAI() {
+
+    navigate("cat://cat.ai");
+
+    setAddress("cat://cat.ai");
+
+
+    content.innerHTML = `
+
+        <div class="chat-window">
+
+            <div class="chat-title">
+                🐈 Cat.AI — ONLINE
+            </div>
+
+
+            <div
+                id="chatMessages"
+                class="chat-messages">
+
+                <div class="chat-message cat">
+
+                    🐈 Cat.AI:
+
+                    <br>
+
+                    Meow. Welcome to the
+                    Cat Internet.
+
+                    <br>
+
+                    What are you doing here?
+
+                </div>
+
+            </div>
+
+
+            <div class="chat-input">
+
+                <input
+                    id="catInput"
+                    placeholder="Talk to Cat.AI..."
+                    autocomplete="off"
+                >
+
+                <button
+                    onclick="sendCatMessage()">
+
+                    SEND
+
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+
 
     const input =
-        document.getElementById("message");
+        document.getElementById(
+            "catInput"
+        );
 
-    const result =
-        document.getElementById("chatResult");
+
+    input.addEventListener(
+        "keydown",
+        event => {
+
+            if(event.key === "Enter") {
+
+                sendCatMessage();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   ADD CHAT MESSAGE
+===================================================== */
+
+function addCatMessage(
+    text,
+    type
+) {
+
+    const box =
+        document.getElementById(
+            "chatMessages"
+        );
+
+    if(!box)
+        return;
+
 
     const message =
+        document.createElement(
+            "div"
+        );
+
+
+    message.className =
+        "chat-message " +
+        type;
+
+
+    message.textContent =
+        text;
+
+
+    box.appendChild(
+        message
+    );
+
+
+    box.scrollTop =
+        box.scrollHeight;
+
+}
+
+
+/* =====================================================
+   SEND TO REAL SERVER
+===================================================== */
+
+async function sendCatMessage() {
+
+    const input =
+        document.getElementById(
+            "catInput"
+        );
+
+
+    if(!input)
+        return;
+
+
+    const text =
         input.value.trim();
 
 
-    if (!message) {
-
-        result.innerHTML =
-            '<div class="result-box">' +
-            '🐈 MEOW? You forgot to type something!' +
-            '</div>';
-
+    if(!text)
         return;
-    }
 
 
-    result.innerHTML =
-        '<div class="result-box">' +
-        '🐾 Cat.AI is thinking... ' +
-        '</div>';
+    addCatMessage(
+        "You: " + text,
+        "user"
+    );
+
+
+    input.value = "";
+
+
+    addCatMessage(
+        "🐈 Cat.AI is thinking...",
+        "cat"
+    );
+
+
+    const chatBox =
+        document.getElementById(
+            "chatMessages"
+        );
 
 
     try {
@@ -399,16 +1444,24 @@ async function askCatAI() {
             await fetch(
                 "/api/chat",
                 {
+
                     method: "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json"
+
                     },
 
-                    body: JSON.stringify({
-                        message: message
-                    })
+                    body:
+                        JSON.stringify({
+
+                            message:
+                                text
+
+                        })
+
                 }
             );
 
@@ -417,242 +1470,694 @@ async function askCatAI() {
             await response.json();
 
 
-        if (!response.ok) {
+        /* Remove thinking message */
 
-            throw new Error(
-                data.error ||
-                "Cat.AI request failed."
+        const messages =
+            chatBox.querySelectorAll(
+                ".chat-message"
             );
+
+
+        const lastMessage =
+            messages[
+                messages.length - 1
+            ];
+
+
+        if(
+            lastMessage &&
+            lastMessage.textContent.includes(
+                "thinking"
+            )
+        ) {
+
+            lastMessage.remove();
+
         }
 
 
-        result.innerHTML =
+        /* Server error */
 
-            '<div class="result-box">' +
+        if(!response.ok) {
 
-            '<div class="result-title">' +
-            '🧠 Cat.AI' +
-            '</div>' +
+            addCatMessage(
+                "🐈 Cat.AI ERROR: " +
+                (
+                    data.error ||
+                    "Something went wrong."
+                ),
+                "cat"
+            );
 
-            '<div>' +
-            escapeHTML(data.reply)
-                .replace(/\n/g, "<br>") +
-            '</div>' +
+            return;
 
-            '</div>';
+        }
 
 
-    } catch (error) {
+        /* Real Cat.AI reply */
 
-        result.innerHTML =
+        addCatMessage(
+            "🐈 Cat.AI: " +
+            data.reply,
+            "cat"
+        );
 
-            '<div class="result-box">' +
 
-            '<b>😿 Cat.AI couldn\'t connect to its brain.</b>' +
+    } catch(error) {
 
-            '<br><br>' +
+        const messages =
+            chatBox.querySelectorAll(
+                ".chat-message"
+            );
 
-            escapeHTML(error.message) +
 
-            '</div>';
+        const lastMessage =
+            messages[
+                messages.length - 1
+            ];
+
+
+        if(
+            lastMessage &&
+            lastMessage.textContent.includes(
+                "thinking"
+            )
+        ) {
+
+            lastMessage.remove();
+
+        }
+
+
+        addCatMessage(
+            "🐈 Cat.AI ERROR: " +
+            "Could not connect to the Cat Internet server.",
+            "cat"
+        );
+
+
+        console.error(
+            "Cat.AI connection error:",
+            error
+        );
+
     }
+
 }
 
 
-/* =========================================================
-   FILE UPLOAD
-   ========================================================= */
+/* =====================================================
+   SEARCH
+===================================================== */
 
-async function uploadCatFile() {
+function showSearch() {
 
-    const fileInput =
-        document.getElementById("catFile");
+    navigate("cat://search");
 
-    const result =
-        document.getElementById("fileResult");
+    setAddress("cat://search");
 
 
-    if (!fileInput.files.length) {
+    content.innerHTML = `
 
-        result.innerHTML =
-            '<div class="file-response">' +
-            '🐈 Please choose a file first.' +
-            '</div>';
+        <div class="search-box">
 
-        return;
-    }
+            <h2>
+                🔎 Cat Search
+            </h2>
 
+            <input
+                id="searchInput"
+                placeholder="Search the Cat Internet..."
+            >
 
-    const file =
-        fileInput.files[0];
+            <button
+                onclick="performSearch()">
 
+                SEARCH
 
-    result.innerHTML =
-        '<div class="file-response">' +
-        '🐾 Cat.AI is reading <b>' +
-        escapeHTML(file.name) +
-        '</b>...' +
-        '</div>';
+            </button>
 
-
-    try {
-
-        const content =
-            await file.text();
+        </div>
 
 
-        const response =
-            await fetch(
-                "/api/upload",
-                {
-                    method: "POST",
+        <div
+            id="searchResults"
+            class="search-results">
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+            <p>
+                Type something and search.
+            </p>
 
-                    body: JSON.stringify({
+        </div>
 
-                        filename:
-                            file.name,
+    `;
 
-                        content:
-                            content
 
-                    })
+    document
+        .getElementById("searchInput")
+        .addEventListener(
+            "keydown",
+            event => {
+
+                if(event.key === "Enter") {
+
+                    performSearch();
+
                 }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data.error ||
-                "Cat.AI couldn't read the file."
-            );
-        }
-
-
-        result.innerHTML =
-
-            '<div class="file-response">' +
-
-            '<div class="result-title">' +
-            '🧠 Cat.AI examined: ' +
-            escapeHTML(data.filename) +
-            '</div>' +
-
-            '<div>' +
-            escapeHTML(data.reply)
-                .replace(/\n/g, "<br>") +
-            '</div>' +
-
-            '</div>';
-
-
-    } catch (error) {
-
-        result.innerHTML =
-
-            '<div class="file-response">' +
-
-            '<b>😿 Cat.AI couldn\'t read the file.</b>' +
-
-            '<br><br>' +
-
-            escapeHTML(error.message) +
-
-            '</div>';
-    }
-}
-
-
-/* =========================================================
-   CAT STATUS
-   ========================================================= */
-
-async function getCatStatus() {
-
-    const status =
-        document.getElementById("catStatus");
-
-
-    try {
-
-        const response =
-            await fetch("/api/cat");
-
-
-        const data =
-            await response.json();
-
-
-        status.textContent =
-
-            "Done. | " +
-            "🐈 Cats online: " +
-            data.catsOnline +
-            " | 😼 Suspicion level: " +
-            data.suspicion;
-
-
-    } catch (error) {
-
-        status.textContent =
-            "😿 The cats cannot be reached.";
-    }
-}
-
-
-/* =========================================================
-   ENTER KEY
-   ========================================================= */
-
-document
-    .getElementById("message")
-    .addEventListener(
-        "keydown",
-        function(event) {
-
-            if (event.key === "Enter") {
-
-                askCatAI();
 
             }
+        );
 
-        }
+}
+
+
+/* =====================================================
+   FAKE CAT SEARCH
+===================================================== */
+
+function performSearch() {
+
+    const input =
+        document.getElementById(
+            "searchInput"
+        );
+
+
+    const results =
+        document.getElementById(
+            "searchResults"
+        );
+
+
+    const query =
+        input.value.trim();
+
+
+    if(!query)
+        return;
+
+
+    setAddress(
+        "cat://search/" +
+        encodeURIComponent(query)
     );
 
 
-/* =========================================================
-   HTML ESCAPING
-   ========================================================= */
+    const lower =
+        query.toLowerCase();
 
-function escapeHTML(text) {
+
+    if(
+        lower.includes("human") ||
+        lower.includes("person")
+    ) {
+
+        increaseSuspicion(10);
+
+    }
+
+
+    if(
+        lower.includes("shoe") ||
+        lower.includes("shoes")
+    ) {
+
+        increaseSuspicion(5);
+
+    }
+
+
+    results.innerHTML = `
+
+        <h2>
+            Search results for:
+            "${escapeHTML(query)}"
+        </h2>
+
+
+        <div class="result">
+
+            <a onclick="showCatAI()">
+                Cat.AI
+            </a>
+
+            <p>
+                The suspicious AI cat
+                living inside the Cat Internet.
+            </p>
+
+        </div>
+
+
+        <div class="result">
+
+            <a onclick="showCats()">
+                Cat Pictures
+            </a>
+
+            <p>
+                Thousands of cats.
+                Probably.
+            </p>
+
+        </div>
+
+
+        <div class="result">
+
+            <a onclick="showNews()">
+                Cat News Network
+            </a>
+
+            <p>
+                Breaking news from the
+                feline world.
+            </p>
+
+        </div>
+
+
+        <div class="result">
+
+            <a onclick="shoeWarning()">
+                Shoes
+            </a>
+
+            <p>
+                ⚠️ Flagged by Cat.AI.
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   CATS
+===================================================== */
+
+function showCats() {
+
+    navigate("cat://cats");
+
+    setAddress("cat://cats");
+
+
+    content.innerHTML = `
+
+        <div class="site-header">
+
+            <h1>
+                🐱 CAT PICTURES
+            </h1>
+
+            <p>
+                Very serious Internet research.
+            </p>
+
+        </div>
+
+
+        <div class="site-body">
+
+            <div class="web-grid">
+
+
+                <div class="web-card">
+
+                    <div class="cat-picture">
+                        🐈
+                    </div>
+
+                    <h2>
+                        Cat
+                    </h2>
+
+                    <p>
+                        Cat.
+                    </p>
+
+                </div>
+
+
+                <div class="web-card">
+
+                    <div class="cat-picture">
+                        🐈‍⬛
+                    </div>
+
+                    <h2>
+                        Black Cat
+                    </h2>
+
+                    <p>
+                        Also cat.
+                    </p>
+
+                </div>
+
+
+                <div class="web-card">
+
+                    <div class="cat-picture">
+                        😺
+                    </div>
+
+                    <h2>
+                        Happy Cat
+                    </h2>
+
+                    <p>
+                        Extremely happy.
+                    </p>
+
+                </div>
+
+
+                <div class="web-card">
+
+                    <div class="cat-picture">
+                        😼
+                    </div>
+
+                    <h2>
+                        Suspicious Cat
+                    </h2>
+
+                    <p>
+                        It knows something.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   NEWS
+===================================================== */
+
+function showNews() {
+
+    navigate("cat://news");
+
+    setAddress("cat://news");
+
+
+    content.innerHTML = `
+
+        <div class="site-header">
+
+            <h1>
+                📰 CAT NEWS NETWORK
+            </h1>
+
+            <p>
+                News from around the Cat Internet.
+            </p>
+
+        </div>
+
+
+        <div class="site-body">
+
+
+            <div class="web-card">
+
+                <h2>
+                    BREAKING: Cat discovers box
+                </h2>
+
+                <p>
+                    A cat has discovered a cardboard
+                    box. Scientists are confused.
+                </p>
+
+            </div>
+
+
+            <br>
+
+
+            <div class="web-card">
+
+                <h2>
+                    Shoes remain suspicious
+                </h2>
+
+                <p>
+                    Cat.AI has once again confirmed
+                    that shoes are suspicious.
+                </p>
+
+            </div>
+
+
+            <br>
+
+
+            <div class="web-card">
+
+                <h2>
+                    Cat Internet reaches 47 cats online
+                </h2>
+
+                <p>
+                    Nobody knows where the other
+                    cats are.
+                </p>
+
+            </div>
+
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   SHOES
+===================================================== */
+
+function shoeWarning() {
+
+    increaseSuspicion(5);
+
+    setAddress("cat://shoes");
+
+
+    content.innerHTML = `
+
+        <div class="site-header">
+
+            <h1>
+                👟 SHOE DATABASE
+            </h1>
+
+        </div>
+
+
+        <div class="site-body">
+
+            <div class="notice">
+
+                ⚠️ CAT.AI WARNING
+
+                <br><br>
+
+                Shoes have been detected.
+
+                <br><br>
+
+                Cat.AI strongly recommends
+                looking at cats instead.
+
+            </div>
+
+
+            <div class="cat-picture">
+
+                👟😾
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   ABOUT
+===================================================== */
+
+function showAbout() {
+
+    navigate("cat://about");
+
+    setAddress("cat://about");
+
+
+    content.innerHTML = `
+
+        <div class="site-header">
+
+            <h1>
+                ℹ️ ABOUT
+            </h1>
+
+        </div>
+
+
+        <div class="site-body">
+
+            <div class="notice">
+
+                <strong>
+                    Cat Internet Simulator
+                </strong>
+
+                <br><br>
+
+                A fictional fake Internet
+                full of cats.
+
+            </div>
+
+
+            <div class="web-card">
+
+                <h2>
+                    History
+                </h2>
+
+                <p>
+                    Cat.AI was the original website.
+                </p>
+
+                <p>
+                    Cat Internet Simulator is the
+                    second website based on the
+                    original Cat.AI.
+                </p>
+
+                <p>
+                    The original Cat.AI now lives
+                    inside the Cat Internet Simulator.
+                </p>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   URL RENDERER
+===================================================== */
+
+function renderURL(url) {
+
+    if(url === "cat://home") {
+
+        renderHome();
+
+        return;
+
+    }
+
+
+    if(url === "cat://cat.ai") {
+
+        showCatAI();
+
+        return;
+
+    }
+
+
+    if(url === "cat://search") {
+
+        showSearch();
+
+        return;
+
+    }
+
+
+    if(url === "cat://cats") {
+
+        showCats();
+
+        return;
+
+    }
+
+
+    if(url === "cat://news") {
+
+        showNews();
+
+        return;
+
+    }
+
+
+    if(url === "cat://about") {
+
+        showAbout();
+
+        return;
+
+    }
+
+
+    renderHome();
+
+}
+
+
+/* =====================================================
+   HTML ESCAPING
+===================================================== */
+
+function escapeHTML(value) {
 
     const div =
         document.createElement("div");
 
     div.textContent =
-        String(text);
+        String(value);
 
     return div.innerHTML;
+
 }
 
 
-/* =========================================================
+/* =====================================================
    START
-   ========================================================= */
+===================================================== */
 
-getCatStatus();
+updateSuspicion();
+
+renderHome();
 
 </script>
 
 </body>
 </html>
-

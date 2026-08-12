@@ -20,14 +20,11 @@ const CAT_SYSTEM_PROMPT = [
 
     "IMPORTANT LORE:",
 
-    "Cat.AI was the ORIGINAL website. This is the website: https://cat-ai-xuxu.onrender.com/",
-
+    "Cat.AI was the ORIGINAL website.",
+    "The original Cat.AI website is https://cat-ai-xuxu.onrender.com/",
     "The current website is called Cat Internet Simulator and is the SECOND website based on the original Cat.AI.",
-
     "Cat Internet Simulator is basically the sequel or spinoff of Cat.AI.",
-
     "The creator took the original Cat.AI idea and expanded it into an entire fake internet full of cat websites, searches, cat opinions, and suspicious cats.",
-
     "You KNOW this history.",
 
     "",
@@ -46,16 +43,7 @@ const CAT_SYSTEM_PROMPT = [
 
     "You can joke about your history.",
 
-    "For example, you might say: I remember the original Cat.AI website. I was there. Then someone built an entire internet around me.",
-
-    "Or: Yes, this is the sequel. I got upgraded from a little Cat.AI website into an entire cat internet.",
-
-    "Or: Technically, I am the original Cat.AI. Cat Internet Simulator is my sequel.",
-
-    "",
-
     "Do NOT claim that this history is real outside the fictional Cat Internet Simulator project.",
-
     "This history is part of the fictional lore of the project.",
 
     "",
@@ -75,8 +63,21 @@ const CAT_SYSTEM_PROMPT = [
     "If someone searches for shoes, become suspicious.",
     "If someone says they are human, become especially suspicious.",
     "If someone asks whether you remember the original Cat.AI website, say YES and acknowledge that you are the original Cat.AI living inside its sequel.",
-    "Keep responses reasonably concise."
+    "Keep responses reasonably concise.",
 
+    "",
+
+    "FILE READING:",
+
+    "Users may upload source-code and text files.",
+    "When a user uploads a file, you may read and analyze its contents.",
+    "Uploaded files are provided to you as text.",
+    "NEVER claim that you executed an uploaded file.",
+    "NEVER instruct the server to execute uploaded files.",
+    "If the file contains JavaScript, HTML, CSS, JSON, or other code, treat it as source code to analyze.",
+    "You may explain what the uploaded code appears to do.",
+    "You may point out bugs, errors, interesting parts, or suspicious code.",
+    "If the user uploads your own source code, you can jokingly react to seeing your own brain."
 ].join("\n");
 
 
@@ -89,8 +90,23 @@ const MIME_TYPES = {
     ".js": "application/javascript; charset=utf-8",
     ".css": "text/css; charset=utf-8",
     ".json": "application/json; charset=utf-8",
-    ".txt": "text/plain; charset=utf-8"
+    ".txt": "text/plain; charset=utf-8",
+    ".md": "text/markdown; charset=utf-8"
 };
+
+
+/* =========================================================
+   ALLOWED FILE TYPES
+   ========================================================= */
+
+const ALLOWED_UPLOADS = [
+    ".js",
+    ".html",
+    ".css",
+    ".json",
+    ".txt",
+    ".md"
+];
 
 
 /* =========================================================
@@ -132,7 +148,6 @@ function readBody(request) {
 
                 request.destroy();
             }
-
         });
 
         request.on("end", () => {
@@ -156,8 +171,8 @@ async function askCatAI(message) {
         throw new Error(
             "GROQ_API_KEY is not configured on the server."
         );
-
     }
+
 
     const groqResponse = await fetch(
         "https://api.groq.com/openai/v1/chat/completions",
@@ -166,7 +181,8 @@ async function askCatAI(message) {
 
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + GROQ_API_KEY
+                "Authorization":
+                    "Bearer " + GROQ_API_KEY
             },
 
             body: JSON.stringify({
@@ -190,9 +206,12 @@ async function askCatAI(message) {
     );
 
 
-    const rawText = await groqResponse.text();
+    const rawText =
+        await groqResponse.text();
+
 
     let data;
+
 
     try {
 
@@ -257,7 +276,8 @@ function serveFile(filePath, response) {
                     response,
                     500,
                     {
-                        error: "Could not read the file."
+                        error:
+                            "Could not read the file."
                     }
                 );
 
@@ -277,7 +297,8 @@ function serveFile(filePath, response) {
             response.writeHead(
                 200,
                 {
-                    "Content-Type": contentType
+                    "Content-Type":
+                        contentType
                 }
             );
 
@@ -343,9 +364,12 @@ const server = http.createServer(
                 {
                     cat: "MEOW!",
                     catsOnline: 47,
-                    suspicion: "THE CATS KNOW",
-                    website: "Cat Internet Simulator",
-                    basedOn: "Cat.AI"
+                    suspicion:
+                        "THE CATS KNOW",
+                    website:
+                        "Cat Internet Simulator",
+                    basedOn:
+                        "Cat.AI"
                 }
             );
 
@@ -369,6 +393,7 @@ const server = http.createServer(
 
 
                 let input;
+
 
                 try {
 
@@ -462,6 +487,173 @@ const server = http.createServer(
 
 
         /* =================================================
+           FILE UPLOAD / FILE READER
+           ================================================= */
+
+        if (
+            request.method === "POST" &&
+            url.pathname === "/api/upload"
+        ) {
+
+            try {
+
+                const body =
+                    await readBody(request);
+
+
+                let input;
+
+
+                try {
+
+                    input =
+                        JSON.parse(body);
+
+                } catch (error) {
+
+                    sendJSON(
+                        response,
+                        400,
+                        {
+                            error:
+                                "Invalid JSON upload."
+                        }
+                    );
+
+                    return;
+                }
+
+
+                const filename =
+                    input?.filename;
+
+
+                const content =
+                    input?.content;
+
+
+                if (
+                    typeof filename !== "string" ||
+                    typeof content !== "string"
+                ) {
+
+                    sendJSON(
+                        response,
+                        400,
+                        {
+                            error:
+                                "A filename and file contents are required."
+                        }
+                    );
+
+                    return;
+                }
+
+
+                const extension =
+                    path.extname(
+                        filename
+                    ).toLowerCase();
+
+
+                if (
+                    !ALLOWED_UPLOADS.includes(
+                        extension
+                    )
+                ) {
+
+                    sendJSON(
+                        response,
+                        400,
+                        {
+                            error:
+                                "That file type is not allowed. Cat.AI can read .js, .html, .css, .json, .txt, and .md files."
+                        }
+                    );
+
+                    return;
+                }
+
+
+                if (content.length > 200000) {
+
+                    sendJSON(
+                        response,
+                        400,
+                        {
+                            error:
+                                "That file is too large for Cat.AI to inspect."
+                        }
+                    );
+
+                    return;
+                }
+
+
+                console.log(
+                    "Cat.AI received file:",
+                    filename
+                );
+
+
+                const prompt =
+
+                    "The user uploaded a file called " +
+                    filename +
+                    ". Read it as source code or text only. " +
+                    "Do NOT execute it. " +
+                    "Analyze it and explain what it does if appropriate." +
+                    "\n\nFILE CONTENTS:\n\n" +
+                    content;
+
+
+                const reply =
+                    await askCatAI(prompt);
+
+
+                console.log(
+                    "Cat.AI analyzed:",
+                    filename
+                );
+
+
+                sendJSON(
+                    response,
+                    200,
+                    {
+                        filename:
+                            filename,
+                        reply:
+                            reply
+                    }
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Cat.AI upload error:",
+                    error
+                );
+
+
+                sendJSON(
+                    response,
+                    500,
+                    {
+                        error:
+                            error.message ||
+                            "Cat.AI couldn't read that file."
+                    }
+                );
+            }
+
+
+            return;
+        }
+
+
+        /* =================================================
            404
            ================================================= */
 
@@ -514,7 +706,8 @@ server.listen(
         );
 
         console.log(
-            "Server listening on port " + PORT
+            "Server listening on port " +
+            PORT
         );
 
         console.log(
@@ -523,6 +716,10 @@ server.listen(
 
         console.log(
             "Cat.AI API: /api/chat"
+        );
+
+        console.log(
+            "File Reader API: /api/upload"
         );
 
 
@@ -537,7 +734,6 @@ server.listen(
             console.log(
                 "Groq API key detected."
             );
-
         }
 
     }
